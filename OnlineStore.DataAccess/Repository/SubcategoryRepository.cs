@@ -20,7 +20,13 @@ namespace OnlineStore.DataAccess.Repository
 
         public void Update(Subcategory subcategory)
         {
-            _db.Subcategories.Update(subcategory);
+            //_db.Subcategories.Update(subcategory);
+            Subcategory subcategoryFromDb = _db.Subcategories.FirstOrDefault(sc => sc.Id == subcategory.Id);
+            if (subcategoryFromDb != null)
+            {
+                subcategoryFromDb.Name = subcategory.Name;
+                subcategoryFromDb.CategoryId = subcategory.CategoryId;
+            }
         }
     }
 }
