@@ -1,0 +1,28 @@
+﻿@using OnlineStore.DataAccess.Repository
+
+@model RepositoryWrapper
+
+@*@foreach(var category in Model.Category.GetAll()){
+    <div>@category.Name | @category.Id </div> <br />
+
+    @foreach (var subcategory in Model.Subcategory.GetAll().Where(sc => sc.Id == category.Id))
+    {
+       <div style="margin-left:20px;">@subcategory.Name | @subcategory.Id</div> <br />
+    }
+}*@
+
+@foreach (var product in Model.Product.GetAll())
+{
+    <div>@product.Name | @product.Id</div>
+    <br />
+    <div>@product.Manufacturer.Name | @product.ManufacturerId</div>
+    <br />
+    <div>@product.Description</div>
+    <br />
+    <div>@product.Price | @product.Id</div>
+    <br />
+    <div>@product.Subcategory.Category.Name | @product.Subcategory.Category.Id</div>
+    <br />
+    <div>@product.Subcategory.Name | @product.Subcategory.Id</div>
+    <br />
+}
