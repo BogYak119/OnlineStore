@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace OnlineStore.Models
 
         [Required]
         public int CategoryId { get; set; }
+        [ValidateNever]
         public Category Category { get; set; }
     }
 }

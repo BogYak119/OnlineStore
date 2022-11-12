@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO.Pipelines;
 using System.Net.Http.Headers;
 
-namespace OnlineStoreMvc.Controllers
+namespace OnlineStoreMvc.Areas.Admin.Controllers
 {
     public class HomeController : Controller
     {
@@ -82,6 +82,25 @@ namespace OnlineStoreMvc.Controllers
             Manufacturer footbalMan = new Manufacturer { Name = "Football Manufacturer" };
             Manufacturer golfManufacturer = new Manufacturer { Name = "Golf Manufacturer" };
 
+            return View("Index");
+        }
+
+        //GET
+        public IActionResult Test2()
+        {
+            TestModel model = new TestModel
+            {
+                list = new List<string> { "data", "from", "list"},
+                array = new[] { "data", "from", "array" },
+                Input = "string input"
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Test2(TestModel model)
+        {
+            Console.ReadLine();
             return View("Index");
         }
     }
