@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,10 +25,12 @@ namespace OnlineStore.Models
 
         [Required]
         public int SubcategoryId { get; set; }
+        [ValidateNever]
         public Subcategory Subcategory { get; set; }
 
         [Required]
         public int ManufacturerId { get; set; }
+        [ValidateNever]
         public Manufacturer Manufacturer { get; set; }
 
         public int? Discount { get; set; }

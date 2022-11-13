@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Product List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Product" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New Product
+            </a>
+        </div>
+    </div>
+    <br /><br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Product Category
+                </th>
+                <th>
+                    Product Subcategory
+                </th>
+                <th>
+                    Product Manufacturer
+                </th>
+                <th>
+                    Product Price
+                </th>
+                <th>
+                    Product Discount
+                </th>
+                <th>
+                    Product Description
+                </th>
+                <th>
+                    Product ImageUrl
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td width="50%">
+                        @product.Name;
+                    </td>
+                    <td width="50%">
+                        @product.Subcategory.Category.Name
+                    </td>
+                    <td width="50%">
+                        @product.Subcategory.Name;
+                    </td>
+                    <td width="50%">
+                        @product.Manufacturer.Name;
+                    </td>
+                    <td width="50%">
+                        @product.Price;
+                    </td>
+                    <td width="50%">
+                        @product.Discount;
+                    </td>
+                    <td width="50%">
+                        @product.Description;
+                    </td>
+                    <td width="50%">
+                        @product.ImageUrl;
+                    </td>
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            <a asp-controller="Product" asp-action="Edit" asp-route-id=><i class="bi bi-pencil-square"></i>Edit</a>
+                        </div>
+                        <div class="w-75 btn-group">
+                            <a asp-controller="Product" asp-action="Delete" asp-route-id=.Id><i class="bi bi-trash"></i>Delete</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

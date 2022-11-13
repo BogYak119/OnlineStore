@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Manufacturer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Manufacturer List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Manufacturer" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New Manufacturer
+            </a>
+        </div>
+    </div>
+    <br /><br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    Manufacturer Name
+                </th>
+                <th>
+                    Manufacturer StreetAddress
+                </th>
+                <th>
+                    Manufacturer City
+                </th>
+                <th>
+                    Manufacturer State
+                </th>
+                <th>
+                    Manufacturer PostalCode
+                </th>
+                <th>
+                    Manufacturer PhoneNumber
+                </th>
+                <th>
+                    Manufacturer Email
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var manufacturer in Model)
+            {
+                <tr>
+                    <td width="50%">
+                        @manufacturer.Name;
+                    </td>
+                    <td width="50%">
+                        @manufacturer.StreetAddress;
+                    </td>
+                    <td width="50%">
+                        @manufacturer.City;
+                    </td>
+                    <td width="50%">
+                        @manufacturer.State;
+                    </td>
+                    <td width="50%">
+                        @manufacturer.PostalCode;
+                    </td>
+                    <td width="50%">
+                        @manufacturer.PhoneNumber;
+                    </td>
+                    <td width="50%">
+                        @manufacturer.Email;
+                    </td>
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            <a asp-controller="Manufacturer" asp-action="Edit" asp-route-id=@manufacturer.Id><i class="bi bi-pencil-square"></i>Edit</a>
+                        </div>
+                        <div class="w-75 btn-group">
+                            <a asp-controller="Manufacturer" asp-action="Delete" asp-route-id=@manufacturer.Id><i class="bi bi-trash"></i>Delete</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

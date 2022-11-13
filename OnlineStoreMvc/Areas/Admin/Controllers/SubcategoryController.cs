@@ -6,6 +6,7 @@ using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models;
 using OnlineStore.Models.ViewModels;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace OnlineStoreMvc.Areas.Admin.Controllers
 {
@@ -84,10 +85,6 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
-            TempData["prevName"] = subcategoryVM.Subcategory.Name;
-            TempData["prevId"] = subcategoryVM.Subcategory.CategoryId;
-
             return View(subcategoryVM);
         }
 
@@ -96,41 +93,10 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]  //protection, not necessary
         public IActionResult Edit(SubcategoryVM subcategoryVM)
         {
-            //dont forget to make normal validation, move some validation to client side !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            bool nameIsChanged = subcategoryVM.Subcategory.Name != TempData["prevName"] as string;
-            bool categoryIsChanged = subcategoryVM.Subcategory.CategoryId != TempData["prevID"] as int?;
-            bool newNameIsExists = _repositoryWrapper.Subcategory.GetFirstOrDefault(sc => sc.Name == subcategoryVM.Subcategory.Name) != null;
-            bool stopCheck = false;            
-
-            if(categoryIsChanged && !nameIsChanged)
-            {
-                stopCheck = true;
-            }
-            if(!stopCheck && newNameIsExists && categoryIsChanged)
+            if(_repositoryWrapper.Subcategory.GetFirstOrDefault(sc => sc.Name == subcategoryVM.Subcategory.Name) != null)
             {
                 ModelState.AddModelError("Subcategory.Name", "Database already contains subcategory with the same name.");
-                stopCheck = true;
             }
-            if(categoryIsChanged && !nameIsChanged && !newNameIsExists)
-            {
-                stopCheck = true;
-            }
-            if (!stopCheck && !categoryIsChanged && !nameIsChanged)
-            {
-                ModelState.AddModelError("NoDataChange", "Data didn't change");
-                stopCheck = true;
-            }
-            if(!stopCheck && !categoryIsChanged && nameIsChanged && newNameIsExists)
-            {
-                ModelState.AddModelError("Subcategory.Name", "Database already contains subcategory with the same name.");
-                stopCheck = true;
-            }
-            if(!stopCheck && categoryIsChanged && nameIsChanged && newNameIsExists)
-            {
-                ModelState.AddModelError("Subcategory.Name", "Database already contains subcategory with the same name.");
-                stopCheck = true;
-            }
-
 
             if (ModelState.IsValid)
             {
@@ -146,8 +112,6 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                 Value = i.Id.ToString()
             });
 
-            TempData["prevName"] = subcategoryVM.Subcategory.Name;
-            TempData["prevId"] = subcategoryVM.Subcategory.CategoryId;
             return View(subcategoryVM);
         }
 
