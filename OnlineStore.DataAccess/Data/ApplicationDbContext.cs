@@ -20,13 +20,17 @@ namespace OnlineStore.DataAccess.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Subcategory>()
+            .HasIndex(sc => sc.Name)
+            .IsUnique();
+
             modelBuilder.Entity<Category>().HasData(
                 new Category
                 {
                     Id = 1,
                     Name = "Electronics",
                     CreatedDate = DateTime.Now
-                   
+
                 },
                 new Category
                 {
