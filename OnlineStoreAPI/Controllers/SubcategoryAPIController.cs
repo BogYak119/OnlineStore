@@ -1,23 +1,21 @@
 ﻿using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using OnlineStore.DataAccess.Repository.IRepository;
-using OnlineStore.Models;
 using OnlineStore.Models.DTO;
+using OnlineStore.Models;
 using System.Net;
 
 namespace OnlineStoreAPI.Controllers
 {
-    [Route("api/CategoryAPI")]
+    [Route("api/SubcategoryAPIController")]
     [ApiController]
-    public class CategoryAPIController : ControllerBase
+    public class SubcategoryAPIController : ControllerBase
     {
         protected APIResponse _response;
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IMapper _mapper;
-        public CategoryAPIController(IRepositoryWrapper repositoryWrapper, IMapper mapper)
+        public SubcategoryAPIController(IRepositoryWrapper repositoryWrapper, IMapper mapper)
         {
             _repositoryWrapper = repositoryWrapper;
             _mapper = mapper;
@@ -27,12 +25,12 @@ namespace OnlineStoreAPI.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetCategories()
+        public async Task<ActionResult<APIResponse>> GetSubcategories()
         {
             try
             {
-                IEnumerable<Category> categoryList = await _repositoryWrapper.Category.GetAllAsync();
-                _response.Result = _mapper.Map<List<CategoryDTO>>(categoryList);
+                IEnumerable<Subcategory> subcategoryList = await _repositoryWrapper.Subcategory.GetAllAsync();
+                _response.Result = _mapper.Map<List<SubcategoryDTO>>(subcategoryList);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.isSuccess = true;
 
@@ -47,11 +45,11 @@ namespace OnlineStoreAPI.Controllers
         }
 
 
-        [HttpGet("{id:int}", Name = "GetCategory")]
+        [HttpGet("{id:int}", Name = "GetSubcategory")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetCategory(int id)
+        public async Task<ActionResult<APIResponse>> GetSubcategory(int id)
         {
             try
             {
@@ -61,15 +59,15 @@ namespace OnlineStoreAPI.Controllers
                     return BadRequest(_response);
                 }
 
-                Category category = await _repositoryWrapper.Category.GetAsync(c => c.Id == id);
+                Subcategory subcategory = await _repositoryWrapper.Subcategory.GetAsync(c => c.Id == id);
 
-                if (category == null)
+                if (subcategory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                _response.Result = _mapper.Map<CategoryDTO>(category);
+                _response.Result = _mapper.Map<SubcategoryDTO>(subcategory);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.isSuccess = true;
 
@@ -88,32 +86,36 @@ namespace OnlineStoreAPI.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateCategory([FromBody] CategoryCreateDTO categoryCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateSubcategory([FromBody] SubcategoryCreateDTO subcategoryCreateDTO)
         {
             try
             {
-                if (categoryCreateDTO == null)
+                if (subcategoryCreateDTO == null)
                 {
-                    ModelState.AddModelError("error", "Category is null");
+                    ModelState.AddModelError("error", "Subcategory is null");
+                    return BadRequest(ModelState);
+                }
+                if (await _repositoryWrapper.Subcategory.GetAsync(c => c.Name == subcategoryCreateDTO.Name) != null)
+                {
+                    ModelState.AddModelError("name", "Subcategory with the same name already exists");
+                    return BadRequest(ModelState);
+                }
+                if(await _repositoryWrapper.Category.GetAsync(c => c.Id == subcategoryCreateDTO.CategoryId) == null)
+                {
+                    ModelState.AddModelError("name", "Category ID is not valid");
                     return BadRequest(ModelState);
                 }
 
-                if (await _repositoryWrapper.Category.GetAsync(c => c.Name == categoryCreateDTO.Name) != null)
-                {
-                    ModelState.AddModelError("name", "Category with the same name already exists");
-                    return BadRequest(ModelState);
-                }
+                Subcategory subcategory = _mapper.Map<Subcategory>(subcategoryCreateDTO);
 
-                Category category = _mapper.Map<Category>(categoryCreateDTO);
-
-                await _repositoryWrapper.Category.CreateAsync(category);
+                await _repositoryWrapper.Subcategory.CreateAsync(subcategory);
                 await _repositoryWrapper.SaveAsync();
 
-                _response.Result = _mapper.Map<CategoryDTO>(category);
+                _response.Result = _mapper.Map<SubcategoryDTO>(subcategory);
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.isSuccess = true;
 
-                return CreatedAtRoute("GetCategory", new { id = category.Id }, _response);
+                return CreatedAtRoute("GetSubcategory", new { id = subcategory.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -124,11 +126,11 @@ namespace OnlineStoreAPI.Controllers
         }
 
 
-        [HttpDelete("{id:int}", Name = "DeleteCategory")]
+        [HttpDelete("{id:int}", Name = "DeleteSubcategory")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> DeleteCategory(int id)
+        public async Task<ActionResult<APIResponse>> DeleteSubcategory(int id)
         {
             try
             {
@@ -138,15 +140,15 @@ namespace OnlineStoreAPI.Controllers
                     return BadRequest(_response);
                 }
 
-                Category category = await _repositoryWrapper.Category.GetAsync(c => c.Id == id);
+                Subcategory subcategory = await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == id);
 
-                if (category == null)
+                if (subcategory == null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return NotFound(_response);
                 }
 
-                await _repositoryWrapper.Category.RemoveAsync(category);
+                await _repositoryWrapper.Subcategory.RemoveAsync(subcategory);
                 await _repositoryWrapper.SaveAsync();
 
                 _response.StatusCode = HttpStatusCode.NoContent;
@@ -163,22 +165,22 @@ namespace OnlineStoreAPI.Controllers
         }
 
 
-        [HttpPut("{id:int}", Name = "UpdateCategory")]
+        [HttpPut("{id:int}", Name = "UpdateSubcategory")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
+        public async Task<ActionResult<APIResponse>> UpdateSubcategory(int id, [FromBody] SubcategoryDTO subcategoryDTO)
         {
             try
             {
-                if (categoryDTO == null || id != categoryDTO.Id)
+                if (subcategoryDTO == null || id != subcategoryDTO.Id)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
-                Category category = _mapper.Map<Category>(categoryDTO);
-                await _repositoryWrapper.Category.UpdateAsync(category);
+                Subcategory subcategory = _mapper.Map<Subcategory>(subcategoryDTO);
+                await _repositoryWrapper.Subcategory.UpdateAsync(subcategory);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.isSuccess = true;
