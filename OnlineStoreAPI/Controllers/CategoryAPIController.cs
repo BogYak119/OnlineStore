@@ -1,4 +1,5 @@
-﻿using Azure;
+﻿using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,11 @@ namespace OnlineStoreAPI.Controllers
     public class CategoryAPIController : ControllerBase
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
-        public CategoryAPIController(IRepositoryWrapper repositoryWrapper)
+        private readonly IMapper _mapper;
+        public CategoryAPIController(IRepositoryWrapper repositoryWrapper, IMapper mapper)
         {
             _repositoryWrapper = repositoryWrapper;
+            _mapper = mapper;
         }
 
 
@@ -23,7 +26,8 @@ namespace OnlineStoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategories()
         {
-            return Ok(await _repositoryWrapper.Category.GetAllAsync());
+            IEnumerable<Category> categoryList = await _repositoryWrapper.Category.GetAllAsync();
+            return Ok(_mapper.Map<List<CategoryDTO>>(categoryList));
         }
 
 
@@ -41,7 +45,7 @@ namespace OnlineStoreAPI.Controllers
             if (category == null)
                 return NotFound();
 
-            return Ok(category);
+            return Ok(_mapper.Map<CategoryDTO>(category));
         }
 
 
@@ -49,26 +53,21 @@ namespace OnlineStoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CategoryDTO>> CreateCategory([FromBody]CategoryDTO categoryDTO)
+        public async Task<ActionResult<CategoryDTO>> CreateCategory([FromBody]CategoryCreateDTO categotyCreateDTO)
         {
-            if (categoryDTO == null)
+            if (categotyCreateDTO == null)
                 return BadRequest();
 
             /*if (categoryDTO.Id <= 0)
                 return StatusCode(StatusCodes.Status500InternalServerError);*/
 
-            if (await _repositoryWrapper.Category.GetAsync(c => c.Name == categoryDTO.Name) != null)
+            if (await _repositoryWrapper.Category.GetAsync(c => c.Name == categotyCreateDTO.Name) != null)
             {
                 ModelState.AddModelError("name", "Category with the same name already exists");
                 return BadRequest(ModelState);
             }
 
-            Category category = new()
-            {
-                Id = categoryDTO.Id,
-                Name = categoryDTO.Name,
-                CreatedDate = DateTime.Now              
-            };
+            Category category = _mapper.Map<Category>(categotyCreateDTO);
 
             await _repositoryWrapper.Category.CreateAsync(category);
             await _repositoryWrapper.SaveAsync();
@@ -106,12 +105,8 @@ namespace OnlineStoreAPI.Controllers
             if (categoryDTO == null || id != categoryDTO.Id)
                 return BadRequest();
 
-            Category category = new()
-            {
-                Id = categoryDTO.Id,
-                Name = categoryDTO.Name,
-                UpdatedDate = DateTime.Now
-            };
+            Category category = _mapper.Map<Category>(categoryDTO);
+
             await _repositoryWrapper.Category.UpdateAsync(category);
             await _repositoryWrapper.SaveAsync();
 

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineStore.DataAccess.Data;
 using OnlineStore.DataAccess.Repository;
 using OnlineStore.DataAccess.Repository.IRepository;
+using OnlineStoreAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddAutoMapper(typeof(MappingConfing));
 builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
