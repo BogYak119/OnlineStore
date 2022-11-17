@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Models.DTO
 {
-    public class CategoryDTO
+    public class CategoryCreateDTO
     {
-        public int Id { get; set; }
         [Required]
         [MaxLength(50)]
         public string Name { get; set; }

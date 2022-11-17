@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.Models", "Onlin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.Utility", "OnlineStore.Utility\OnlineStore.Utility.csproj", "{2DD6859D-8A40-4616-B051-B147351192D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStoreAPI", "OnlineStoreAPI\OnlineStoreAPI.csproj", "{641FF6C0-34CE-47BF-90C0-4E16450B6164}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStoreAPI", "OnlineStoreAPI\OnlineStoreAPI.csproj", "{641FF6C0-34CE-47BF-90C0-4E16450B6164}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
