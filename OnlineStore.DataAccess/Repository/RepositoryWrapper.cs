@@ -26,14 +26,9 @@ namespace OnlineStore.DataAccess.Repository
             Product = new ProductRepository(_db);
         }
 
-        public void Save()
+        public async Task SaveAsync()
         {
-            _db.SaveChanges();
-        }
-        public void Clear()
-        {
-            _db.Database.EnsureDeleted();
-            _db.Database.EnsureCreated();
+            await _db.SaveChangesAsync();
         }
     }
 }

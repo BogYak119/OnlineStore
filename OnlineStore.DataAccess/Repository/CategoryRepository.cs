@@ -1,4 +1,5 @@
-﻿using OnlineStore.DataAccess.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineStore.DataAccess.Data;
 using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models;
 using System;
@@ -18,9 +19,12 @@ namespace OnlineStore.DataAccess.Repository
             _db = db;
         }
 
-        public void Update(Category category)
+        public async Task<Category> UpdateAsync(Category category)
         {
+            category.UpdatedDate = DateTime.Now;
             _db.Categories.Update(category);
+            await _db.SaveChangesAsync();
+            return category;
         }
     }
 }

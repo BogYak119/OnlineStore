@@ -9,6 +9,6 @@ namespace OnlineStore.DataAccess.Repository.IRepository
 {
     public interface ISubcategoryRepository : IRepository<Subcategory>
     {
-        void Update(Subcategory subcategory);
+        Task<Subcategory> UpdateAsync(Subcategory subcategory);
     }
 }

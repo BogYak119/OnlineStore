@@ -1,6 +1,7 @@
 ﻿using OnlineStore.DataAccess.Data;
 using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models;
+using OnlineStore.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,15 +19,16 @@ namespace OnlineStore.DataAccess.Repository
             _db = db;
         }
 
-        public void Update(Subcategory subcategory)
+        public async Task<Subcategory> UpdateAsync(Subcategory subcategory)
         {
-            //_db.Subcategories.Update(subcategory);
             Subcategory subcategoryFromDb = _db.Subcategories.FirstOrDefault(sc => sc.Id == subcategory.Id);
             if (subcategoryFromDb != null)
             {
                 subcategoryFromDb.Name = subcategory.Name;
                 subcategoryFromDb.CategoryId = subcategory.CategoryId;
             }
+            await _db.SaveChangesAsync();
+            return subcategory;
         }
     }
 }

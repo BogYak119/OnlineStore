@@ -9,6 +9,7 @@ namespace OnlineStore.DataAccess.Repository.IRepository
 {
     public interface IManufacturerRepository : IRepository<Manufacturer>
     {
-        void Update(Manufacturer manufacturer);
+        Task<Manufacturer> UpdateAsync(Manufacturer manufacturer);
     }
 }
+ 

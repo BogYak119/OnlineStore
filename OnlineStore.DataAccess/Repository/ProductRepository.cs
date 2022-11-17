@@ -18,9 +18,12 @@ namespace OnlineStore.DataAccess.Repository
             _db = db;
         }
 
-        public void Update(Product product)
+        public async Task<Product> UpdateAsync(Product product)
         {
+            //Product.UpdatedDate = DateTime.Now;
             _db.Products.Update(product);
+            await _db.SaveChangesAsync();
+            return product;
         }
     }
 }

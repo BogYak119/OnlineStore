@@ -7,23 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
-    <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OnlineStore.DataAccess\OnlineStore.DataAccess.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Customer\Controllers\" />
-    <Folder Include="Areas\Customer\Models\" />
-    <Folder Include="Areas\Customer\Views\" />
-    <Folder Include="Areas\Support\Controllers\" />
-    <Folder Include="Areas\Support\Models\" />
-    <Folder Include="Areas\Support\Views\" />
   </ItemGroup>
 
 </Project>

@@ -11,8 +11,7 @@ namespace OnlineStore.DataAccess.Repository.IRepository
         ICategoryRepository Category { get; }
         ISubcategoryRepository Subcategory { get; }
         IManufacturerRepository Manufacturer { get; }   
-        IProductRepository Product { get; } 
-        void Save();
-        void Clear();
+        IProductRepository Product { get; }
+        Task SaveAsync();
     }
 }
