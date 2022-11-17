@@ -18,5 +18,34 @@ namespace OnlineStore.DataAccess.Data
         {
             // Database.EnsureCreated();   
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasData(
+                new Category
+                {
+                    Id = 1,
+                    Name = "Electronics",
+                    CreatedDate = DateTime.Now
+                   
+                },
+                new Category
+                {
+                    Id = 2,
+                    Name = "Foods",
+                    CreatedDate = DateTime.Now
+                },
+                new Category
+                {
+                    Id = 3,
+                    Name = "Sports",
+                    CreatedDate = DateTime.Now
+                },
+                new Category
+                {
+                    Id = 4,
+                    Name = "Clothes",
+                    CreatedDate = DateTime.Now
+                });
+        }
     }
 }

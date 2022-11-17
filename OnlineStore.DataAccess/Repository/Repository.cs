@@ -4,6 +4,7 @@ using OnlineStore.DataAccess.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,45 +14,48 @@ namespace OnlineStore.DataAccess.Repository
     {
         private readonly ApplicationDbContext _db;
         internal DbSet<T> dbSet;
+
         public Repository(ApplicationDbContext db)
         {
             _db = db;
             dbSet = _db.Set<T>();
         }
 
-        public void Add(T entity)
+        public async Task CreateAsync(T entity)
         {
-            dbSet.Add(entity);
-        }
-        public void AddRange(IEnumerable<T> entities)
-        {
-            dbSet.AddRange(entities);
-        }
-        public void AddRange(params T[] entities)
-        {
-            foreach (T entity in entities) dbSet.Add(entity);   
-        }
-        public IEnumerable<T> GetAll()
-        {
-            IQueryable<T> query = dbSet;
-            return query.ToList();
+            await dbSet.AddAsync(entity);
+           // await SaveAsync();
         }
 
-        public T GetFirstOrDefault(System.Linq.Expressions.Expression<Func<T, bool>> filter)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null)
         {
             IQueryable<T> query = dbSet;
-            query = query.Where(filter);
-            return query.FirstOrDefault();
+
+            if (filter != null)
+                query = query.Where(filter);
+
+            return await query.ToListAsync();
         }
 
-        public void Remove(T entity)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null)
+        {
+            IQueryable<T> query = dbSet;
+
+            if (filter != null)
+                query = query.Where(filter);
+
+            return await query.FirstOrDefaultAsync();
+        }
+
+        public Task RemoveAsync(T entity)
         {
             dbSet.Remove(entity);
+            return Task.CompletedTask;
         }
 
-        public void RemoveRange(IEnumerable<T> entities)
+        /*public async Task SaveAsync()
         {
-            dbSet.RemoveRange(entities);
-        }
+            await _db.SaveChangesAsync();
+        }*/
     }
 }

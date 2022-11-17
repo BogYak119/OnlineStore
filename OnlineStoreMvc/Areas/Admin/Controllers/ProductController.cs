@@ -16,7 +16,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            IEnumerable<Product> productList = _repositoryWrapper.Product.GetAll();
+            IEnumerable<Product> productList = _repositoryWrapper.Product.GetAllAsync();
             return View(productList);
         }
 
@@ -26,17 +26,17 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             ProductVM productVM = new ProductVM()
             {
                 Product = new Product(),
-                CategoryList = _repositoryWrapper.Category.GetAll().Select(i => new SelectListItem
+                CategoryList = _repositoryWrapper.Category.GetAllAsync().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
                 }),
-                SubcategoryList = _repositoryWrapper.Subcategory.GetAll().Select(i => new SelectListItem
+                SubcategoryList = _repositoryWrapper.Subcategory.GetAllAsync().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
                 }),
-                ManufacturerList = _repositoryWrapper.Manufacturer.GetAll().Select(i => new SelectListItem
+                ManufacturerList = _repositoryWrapper.Manufacturer.GetAllAsync().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
