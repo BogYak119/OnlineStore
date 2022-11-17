@@ -37,9 +37,13 @@ namespace OnlineStore.DataAccess.Repository
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true)
         {
             IQueryable<T> query = dbSet;
+
+            if (!tracked)
+                query = query.AsNoTracking();
+            
 
             if (filter != null)
                 query = query.Where(filter);

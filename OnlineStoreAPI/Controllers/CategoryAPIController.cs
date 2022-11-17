@@ -176,6 +176,12 @@ namespace OnlineStoreAPI.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
+                if(await _repositoryWrapper.Category.GetAsync(c => c.Name == categoryDTO.Name) != null)
+                {
+                    ModelState.AddModelError("name", "Category with the same name already exists");
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
 
                 Category category = _mapper.Map<Category>(categoryDTO);
                 await _repositoryWrapper.Category.UpdateAsync(category);
