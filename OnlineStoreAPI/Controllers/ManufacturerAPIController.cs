@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models;
@@ -10,14 +8,14 @@ using System.Net;
 
 namespace OnlineStoreAPI.Controllers
 {
-    [Route("api/CategoryAPI")]
+    [Route("api/ManufacturerAPIController")]
     [ApiController]
-    public class CategoryAPIController : ControllerBase
+    public class ManufacturerAPIController : ControllerBase
     {
         protected APIResponse _response;
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IMapper _mapper;
-        public CategoryAPIController(IRepositoryWrapper repositoryWrapper, IMapper mapper)
+        public ManufacturerAPIController(IRepositoryWrapper repositoryWrapper, IMapper mapper)
         {
             _repositoryWrapper = repositoryWrapper;
             _mapper = mapper;
@@ -27,12 +25,12 @@ namespace OnlineStoreAPI.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetCategories()
+        public async Task<ActionResult<APIResponse>> GetManufacturers()
         {
             try
             {
-                IEnumerable<Category> categoryList = await _repositoryWrapper.Category.GetAllAsync();
-                _response.Result = _mapper.Map<List<CategoryDTO>>(categoryList);
+                IEnumerable<Manufacturer> manufacturerList = await _repositoryWrapper.Manufacturer.GetAllAsync();
+                _response.Result = _mapper.Map<List<ManufacturerDTO>>(manufacturerList);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.isSuccess = true;
 
@@ -47,11 +45,11 @@ namespace OnlineStoreAPI.Controllers
         }
 
 
-        [HttpGet("{id:int}", Name = "GetCategory")]
+        [HttpGet("{id:int}", Name = "GetManufacturer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetCategory(int id)
+        public async Task<ActionResult<APIResponse>> GetManufacturer(int id)
         {
             try
             {
@@ -63,17 +61,17 @@ namespace OnlineStoreAPI.Controllers
                     return BadRequest(_response);
                 }
 
-                Category category = await _repositoryWrapper.Category.GetAsync(c => c.Id == id);
+                Manufacturer manufacturer = await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == id);
 
-                if (category == null)
+                if (manufacturer == null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErorrMessages = new List<string> { "category not found" };
+                    _response.ErorrMessages = new List<string> { "Manufacturer not found" };
                     return NotFound(_response);
                 }
 
-                _response.Result = _mapper.Map<CategoryDTO>(category);
+                _response.Result = _mapper.Map<ManufacturerDTO>(manufacturer);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.isSuccess = true;
 
@@ -86,41 +84,40 @@ namespace OnlineStoreAPI.Controllers
             }
             return _response;
         }
-
 
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateCategory([FromBody] CategoryCreateDTO categoryCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateManufacturer([FromBody] ManufacturerCreateDTO manufacturerCreateDTO)
         {
             try
             {
-                if (categoryCreateDTO == null)
+                if (manufacturerCreateDTO == null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "category is null" };
+                    _response.ErorrMessages = new List<string> { "Manufacturer is null" };
                     return BadRequest(_response);
                 }
-                if (await _repositoryWrapper.Category.GetAsync(c => c.Name == categoryCreateDTO.Name) != null)
+                if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Name == manufacturerCreateDTO.Name) != null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Category with the same name already exists" };
+                    _response.ErorrMessages = new List<string> { "Manufacturer with the same name already exists" };
                     return BadRequest(_response);
                 }
 
-                Category category = _mapper.Map<Category>(categoryCreateDTO);
+                Manufacturer manufacturer = _mapper.Map<Manufacturer>(manufacturerCreateDTO);
 
-                await _repositoryWrapper.Category.CreateAsync(category);
+                await _repositoryWrapper.Manufacturer.CreateAsync(manufacturer);
                 await _repositoryWrapper.SaveAsync();
 
-                _response.Result = _mapper.Map<CategoryDTO>(category);
+                _response.Result = _mapper.Map<ManufacturerDTO>(manufacturer);
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.isSuccess = true;
 
-                return CreatedAtRoute("GetCategory", new { id = category.Id }, _response);
+                return CreatedAtRoute("GetManufacturer", new { id = manufacturer.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -131,11 +128,11 @@ namespace OnlineStoreAPI.Controllers
         }
 
 
-        [HttpDelete("{id:int}", Name = "DeleteCategory")]
+        [HttpDelete("{id:int}", Name = "DeleteManufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> DeleteCategory(int id)
+        public async Task<ActionResult<APIResponse>> DeleteManufacturer(int id)
         {
             try
             {
@@ -147,17 +144,17 @@ namespace OnlineStoreAPI.Controllers
                     return BadRequest(_response);
                 }
 
-                Category category = await _repositoryWrapper.Category.GetAsync(c => c.Id == id);
+                Manufacturer manufacturer = await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == id);
 
-                if (category == null)
+                if (manufacturer == null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErorrMessages = new List<string> { "category not found" };
+                    _response.ErorrMessages = new List<string> { "Manufacturer not found" };
                     return NotFound(_response);
                 }
 
-                await _repositoryWrapper.Category.RemoveAsync(category);
+                await _repositoryWrapper.Manufacturer.RemoveAsync(manufacturer);
                 await _repositoryWrapper.SaveAsync();
 
                 _response.StatusCode = HttpStatusCode.NoContent;
@@ -174,37 +171,38 @@ namespace OnlineStoreAPI.Controllers
         }
 
 
-        [HttpPut("{id:int}", Name = "UpdateCategory")]
+        [HttpPut("{id:int}", Name = "UpdateManufacturer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
+        public async Task<ActionResult<APIResponse>> UpdateManufacturer(int id, [FromBody] ManufacturerDTO manufacturerDTO)
         {
             try
             {
-                if (categoryDTO == null || id != categoryDTO.Id)
+                if (manufacturerDTO == null || id != manufacturerDTO.Id)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "categoryDTO is null or id != categoryDTO.id" };
+                    _response.ErorrMessages = new List<string> { "manufacturerDTO is null or id != manufacturerDTO.id" };
                     return BadRequest(_response);
                 }
-                if (await _repositoryWrapper.Category.GetAsync(c => c.Name == categoryDTO.Name) != null)
+                if (_repositoryWrapper.Manufacturer.GetAsync(m => m.Name == manufacturerDTO.Name, false).Result != null
+                   && _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == id, false).Result.Name != manufacturerDTO.Name)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Category with the same name already exists" };
+                    _response.ErorrMessages = new List<string> { "Manufacturer with the same name already exists" };
                     return BadRequest(_response);
                 }
 
-                Category category = _mapper.Map<Category>(categoryDTO);
-                await _repositoryWrapper.Category.UpdateAsync(category);
+                Manufacturer manufacturer = _mapper.Map<Manufacturer>(manufacturerDTO);
+                await _repositoryWrapper.Manufacturer.UpdateAsync(manufacturer);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.isSuccess = true;
 
                 return Ok(_response);
-            }         
+            }
             catch (Exception ex)
             {
                 _response.isSuccess = false;
