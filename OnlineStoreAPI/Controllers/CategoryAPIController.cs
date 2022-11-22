@@ -116,9 +116,9 @@ namespace OnlineStoreAPI.Controllers
                 await _repositoryWrapper.Category.CreateAsync(category);
                 await _repositoryWrapper.SaveAsync();
 
+                _response.isSuccess = true;
                 _response.Result = _mapper.Map<CategoryDTO>(category);
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.isSuccess = true;
 
                 return CreatedAtRoute("GetCategory", new { id = category.Id }, _response);
             }

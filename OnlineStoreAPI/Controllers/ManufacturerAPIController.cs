@@ -198,8 +198,8 @@ namespace OnlineStoreAPI.Controllers
                 Manufacturer manufacturer = _mapper.Map<Manufacturer>(manufacturerDTO);
                 await _repositoryWrapper.Manufacturer.UpdateAsync(manufacturer);
 
-                _response.StatusCode = HttpStatusCode.NoContent;
                 _response.isSuccess = true;
+                _response.StatusCode = HttpStatusCode.NoContent;
 
                 return Ok(_response);
             }

@@ -61,7 +61,7 @@ namespace OnlineStoreAPI.Controllers
                     return BadRequest(_response);
                 }
 
-                Subcategory subcategory = await _repositoryWrapper.Subcategory.GetAsync(c => c.Id == id);
+                Subcategory subcategory = await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == id);
 
                 if (subcategory == null)
                 {
@@ -71,9 +71,9 @@ namespace OnlineStoreAPI.Controllers
                     return NotFound(_response);
                 }
 
+                _response.isSuccess = true;
                 _response.Result = _mapper.Map<SubcategoryDTO>(subcategory);
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.isSuccess = true;
 
                 return Ok(_response);
             }

@@ -22,6 +22,11 @@ namespace OnlineStoreAPI
             CreateMap<Manufacturer, ManufacturerDTO>().ReverseMap();
             CreateMap<Manufacturer, ManufacturerCreateDTO>().ReverseMap();
             CreateMap<ManufacturerDTO, ManufacturerCreateDTO>().ReverseMap();
+
+            //Product
+            CreateMap<Product, ProductDTO>().ReverseMap();
+            CreateMap<Product, ProductCreateDTO>().ReverseMap();
+            CreateMap<ProductDTO, ProductCreateDTO>().ReverseMap();
         }
     }
 }
