@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
-using OnlineStore.Models;
 using OnlineStore.Models.DTO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace OnlineStoreAPI
+namespace OnlineStore.Models
 {
-    public class MappingConfing : Profile
+    public class DefaultMappingConfig : Profile
     {
-        public MappingConfing()
+        public DefaultMappingConfig()
         {
             //Category
             CreateMap<Category, CategoryDTO>().ReverseMap();

@@ -39,7 +39,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }
@@ -57,7 +57,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "id <= 0" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "id <= 0") };
                     return BadRequest(_response);
                 }
 
@@ -67,7 +67,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErorrMessages = new List<string> { "Subcategory not found" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Subcategory not found") };
                     return NotFound(_response);
                 }
 
@@ -80,7 +80,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }
@@ -97,14 +97,14 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Subcategory is null" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Subcategory is null") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Category.GetAsync(c => c.Id == subcategoryCreateDTO.CategoryId) == null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Category ID is not valid" };
+                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Category ID is not valid")};
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(c => c.Name == subcategoryCreateDTO.Name) != null
@@ -112,7 +112,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Subcategory with the same name already exists" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory with the same name already exists") };
                     return BadRequest(_response);
                 }
 
@@ -130,7 +130,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }
@@ -148,7 +148,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "id <= 0" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "id <= 0") };
                     return BadRequest(_response);
                 }
 
@@ -158,7 +158,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErorrMessages = new List<string> { "category not found" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Subcategory not found") };
                     return NotFound(_response);
                 }
 
@@ -173,7 +173,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }
@@ -191,7 +191,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "subcategoryDTO is null or id != subcategoryDTO.id" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "subcategoryDTO is null or id != sbucategoryDTO.id") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Name == 
@@ -199,7 +199,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Subcategory with the same name already exists" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory with the same name already exists") };
                     return BadRequest(_response);
                 }
 
@@ -214,7 +214,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }

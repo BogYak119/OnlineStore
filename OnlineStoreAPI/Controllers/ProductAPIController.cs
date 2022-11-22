@@ -39,7 +39,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }
@@ -57,7 +57,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "id <= 0" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "id <= 0") };
                     return BadRequest(_response);
                 }
 
@@ -67,7 +67,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErorrMessages = new List<string> { "Product not found" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Product not found") };
                     return NotFound(_response);
                 }
 
@@ -80,7 +80,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }
@@ -97,21 +97,21 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Product is null" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Product is null") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == productCreateDTO.SubcategoryId) == null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "SubcategoryId is invalid" };
+                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory ID is not valid") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == productCreateDTO.ManufacturerId) == null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "ManufacturerId is invalid" };
+                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer ID is not valid") };
                     return BadRequest(_response);
                 }               
                 //if (await _repositoryWrapper.Product.GetAsync(p => p.Id == productCreateDTO.SubcategoryId) == null)
@@ -126,7 +126,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Product with the same name already exists" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductName", "Product with the same name already exists") };
                     return BadRequest(_response);
                 }
 
@@ -145,7 +145,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }
@@ -165,7 +165,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErorrMessages = new List<string> { "Product not found" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Product not found") };
                     return NotFound(_response);
                 }
 
@@ -180,7 +180,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }
@@ -198,28 +198,28 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "productDTO is null or id != productDTO.id" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "productDTO is null or id != productDTO.id") };
                     return BadRequest(_response);
                 }
                 if (id <= 0)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Product ID is invalid" };
+                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductName", "Product ID is not valid") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == productDTO.SubcategoryId) == null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "SubcategoryId is invalid" };
+                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory ID is not valid") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == productDTO.ManufacturerId) == null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "ManufacturerId is invalid" };
+                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer ID is not valid") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productDTO.Name) != null)
@@ -227,7 +227,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErorrMessages = new List<string> { "Product with the same name already exists" };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductName", "Product with the same name already exists") };
                     return BadRequest(_response);
                 }
 
@@ -242,7 +242,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErorrMessages = new List<string> { ex.ToString() };
+                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
             }
             return _response;
         }

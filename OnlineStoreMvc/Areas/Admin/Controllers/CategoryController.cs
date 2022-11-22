@@ -6,33 +6,34 @@ using Microsoft.Extensions.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using OnlineStoreMvc.Services.IServices;
+using AutoMapper;
+using OnlineStore.Models.DTO;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly IRepositoryWrapper _repositoryWrapper;
-        private readonly HttpClient _httpClient;
-        public CategoryController(IHttpClientFactory factory, IRepositoryWrapper repositoryWrapper)
-        {
-            _httpClient = factory.CreateClient("test");
-            _httpClient.DefaultRequestHeaders.Accept.Clear();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("appplication/json"));
-            _httpClient.BaseAddress = new Uri(_httpClient.BaseAddress + "/CategoryAPI");
+        private readonly ICategoryService _categoryService;
+        private readonly IMapper _mapper;
 
-            _repositoryWrapper = repositoryWrapper;
+        public CategoryController(ICategoryService categoryService, IMapper mapper)
+        {
+            _categoryService = categoryService;
+            _mapper = mapper;
         }
-        public IActionResult Index()
-        {
-            List<Category> categories = new List<Category>();
 
-            HttpResponseMessage? response = _httpClient.GetAsync(_httpClient.BaseAddress).Result;
-            if (response.IsSuccessStatusCode)
+        public async Task<IActionResult> Index()
+        {
+            List<CategoryDTO> categoryList = new List<CategoryDTO>();
+            var response = await _categoryService.GetAllAsync<APIResponse>();
+
+            if (response != null && response.isSuccess)
             {
-                string data = response.Content.ReadAsStringAsync().Result;
-                categories = JsonConvert.DeserializeObject<List<Category>>(data);
+                categoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response.Result));
             }
-            return View(categories);
+            return View(categoryList);
         }
 
         //GET
@@ -43,100 +44,84 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         //POST
         [HttpPost]
-        [ValidateAntiForgeryToken]  //protection, not necessary
-        public IActionResult Create(Category category)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CategoryCreateDTO categoryCreateDTO)
         {
-            HttpResponseMessage? response = _httpClient.PostAsJsonAsync(_httpClient.BaseAddress, category).Result;
-
-            if (response.IsSuccessStatusCode)
+            if (ModelState.IsValid)
             {
-                TempData["success"] = "Category created successfully";
-                return RedirectToAction("Index");
+                var response = await _categoryService.CreateAsync<APIResponse>(categoryCreateDTO);
+                if (response != null && response.isSuccess)
+                {
+                    TempData["success"] = "Category created successfully";
+                    return RedirectToAction("Index");
+                }
+
+                foreach (var error in response.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
             }
-
-            string data = response.Content.ReadAsStringAsync().Result;
-
-            Dictionary<string, IList<string>>? errors = JsonConvert.DeserializeObject<Dictionary<string, IList<string>>>(data);
-
-            foreach (var error in errors)
-            {
-                ModelState.AddModelError(error.Key, string.Join("", error.Value));
-            }        
-            return View(category);
+            return View(categoryCreateDTO);
         }
 
         //GET
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || id == 0)
+            var response = await _categoryService.GetAsync<APIResponse>(id);
+            if (response != null && response.isSuccess)
             {
-                return NotFound();
+                CategoryDTO categoryDTO = JsonConvert.DeserializeObject<CategoryDTO>(Convert.ToString(response.Result));
+                return View(categoryDTO);
             }
-
-            Category? categoryFromDb = _repositoryWrapper.Category.GetFirstOrDefault(u => u.Id == id);
-
-            if (categoryFromDb == null)
-            {
-                return NotFound();
-            }
-
-            return View(categoryFromDb);
+            return NotFound();
         }
 
         //POST
         [HttpPost]
-        [ValidateAntiForgeryToken]  //protection, not necessary
-        public IActionResult Edit(Category category)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(CategoryDTO categoryDTO)
         {
-            if (_repositoryWrapper.Category.GetFirstOrDefault(c => c.Name == category.Name) != null)
-            {
-                ModelState.AddModelError("name", "Database already contains category with the same name.");
-            }
-
             if (ModelState.IsValid)
             {
-                _repositoryWrapper.Category.Update(category);
-                _repositoryWrapper.Save();
-                TempData["success"] = "Category updated successfully";
-                return RedirectToAction("Index");
+                var response = await _categoryService.UpdateAsync<APIResponse>(categoryDTO);
+                if (response != null && response.isSuccess)
+                {
+                    TempData["success"] = "Category updated successfully";
+                    return RedirectToAction("Index");
+                }
+
+                foreach (var error in response.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
             }
-            else return View(category);
+            return View(categoryDTO);
         }
 
         //GET
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || id == 0)
+            var response = await _categoryService.GetAsync<APIResponse>(id);
+            if (response != null && response.isSuccess)
             {
-                return NotFound();
+                CategoryDTO categoryDTO = JsonConvert.DeserializeObject<CategoryDTO>(Convert.ToString(response.Result));
+                return View(categoryDTO);
             }
-            Category? categoryFromDb = null;
-
-            HttpResponseMessage? response = _httpClient.GetAsync(_httpClient.BaseAddress + "/CategoryAPI/" + id.ToString()).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                string data = response.Content.ReadAsStringAsync().Result;
-                categoryFromDb = JsonConvert.DeserializeObject<Category>(data);
-                return View(categoryFromDb);
-            }
-            return RedirectToAction("index");
+            return NotFound();
         }
 
         //POST
-        [/*HttpPost, */ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]  //protection, not necessary
-        public IActionResult DeletePOST(Category _category)
+        public async Task<IActionResult> DeletePOST(CategoryDTO categoryDTO)
         {
-            Category? category = _repositoryWrapper.Category.GetFirstOrDefault(c => c.Id == _category.Id);
-            if (category == null)
+            var response = await _categoryService.DeleteAsync<APIResponse>(categoryDTO.Id);
+            if (response != null && response.isSuccess)
             {
-                return NotFound();
-            }
-
-            _repositoryWrapper.Category.Remove(category);
-            _repositoryWrapper.Save();
-            TempData["success"] = "Category deleted successfully";
-            return RedirectToAction("Index");
+                TempData["success"] = "Category deleted successfully";
+                return RedirectToAction("Index");
+            }          
+            return NotFound();
         }
     }
 }
