@@ -19,6 +19,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             _mapper = mapper;
         }
 
+
         public async Task<IActionResult> Index()
         {
             List<ManufacturerDTO> manufacturerList = new List<ManufacturerDTO>();
@@ -31,11 +32,13 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             return View(manufacturerList);
         }
 
+
         //GET
         public IActionResult Create()
         {
             return View();
         }
+
 
         //POST
         [HttpPost]
@@ -59,6 +62,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             return View(manufacturerCreateDTO);
         }
 
+ 
         //GET
         public async Task<IActionResult> Edit(int id)
         {
@@ -70,6 +74,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             }
             return NotFound();
         }
+
 
         //POST
         [HttpPost]
@@ -93,6 +98,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             return View(manufacturerDTO);
         }
 
+
         //GET
         public async Task<IActionResult> Delete(int id)
         {
@@ -104,6 +110,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             }
             return NotFound();
         }
+
 
         //POST
         [HttpPost, ActionName("Delete")]

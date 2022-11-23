@@ -4,6 +4,7 @@ using BulkyBookWeb.Areas.Admin.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Newtonsoft.Json;
 using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models;
@@ -28,6 +29,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             _mapper = mapper;
         }
 
+
         public async Task<IActionResult> Index()
         {
             List<SubcategoryDTO> subcategoryList = new List<SubcategoryDTO>();
@@ -40,20 +42,26 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             return View(subcategoryList);
         }
 
+
         //GET
         public async Task<IActionResult> Create()
         {
             var response = await _categoryService.GetAllAsync<APIResponse>();
-            SubcategoryVM subcategoryVM = new SubcategoryVM()
+            if (response != null && response.isSuccess)
             {
-                SubcategoryDTO = new SubcategoryDTO(),
-                CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response.Result)).Select(i => new SelectListItem
+                SubcategoryVM subcategoryVM = new SubcategoryVM()
                 {
-                    Text = i.Name,
-                    Value = i.Id.ToString()
-                })
-            };
-            return View(subcategoryVM);
+                    SubcategoryDTO = new SubcategoryDTO(),
+                    CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Name,
+                        Value = i.Id.ToString()
+                    })
+                };
+                return View(subcategoryVM);
+            }
+            return NotFound();
         }
 
         //POST
@@ -76,13 +84,19 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             }
 
             var response2 = await _categoryService.GetAllAsync<APIResponse>();
-            subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result)).Select(i => new SelectListItem
+            if (response2 != null && response2.isSuccess)
             {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
-            return View(subcategoryVM);
+                subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result))
+                .Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+                return View(subcategoryVM);
+            }
+            return NotFound();
         }
+
 
         //GET
         public async Task<IActionResult> Edit(int id)
@@ -95,7 +109,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                 SubcategoryVM subcategoryVM = new SubcategoryVM()
                 {
                     SubcategoryDTO = JsonConvert.DeserializeObject<SubcategoryDTO>(Convert.ToString(response1.Result)),
-                    CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result)).Select(i => new SelectListItem
+                    CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result))
+                    .Select(i => new SelectListItem
                     {
                         Text = i.Name,
                         Value = i.Id.ToString()
@@ -126,15 +141,20 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     ModelState.AddModelError(error.Key, error.Value);
                 }
             }
-
             var response2 = await _categoryService.GetAllAsync<APIResponse>();
-            subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result)).Select(i => new SelectListItem
+            if (response2 != null && response2.isSuccess)
             {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
-            return View(subcategoryVM);
+                subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result))
+                .Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+                return View(subcategoryVM);
+            }
+            return NotFound();
         }
+
 
         //GET
         public async Task<IActionResult> Delete(int id)
@@ -147,6 +167,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             }
             return NotFound();
         }
+
 
         //POST
         [HttpPost, ActionName("Delete")]
