@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OnlineStore.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace OnlineStore.Models.ViewModels
     public class SubcategoryVM
     {
         [BindProperty]
-        public Subcategory Subcategory { get; set; }
+        public SubcategoryDTO SubcategoryDTO { get; set; }
 
         [BindProperty]
         [ValidateNever]

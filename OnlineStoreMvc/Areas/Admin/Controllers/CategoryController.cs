@@ -112,7 +112,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         //POST
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]  //protection, not necessary
+        [ValidateAntiForgeryToken] 
         public async Task<IActionResult> DeletePOST(CategoryDTO categoryDTO)
         {
             var response = await _categoryService.DeleteAsync<APIResponse>(categoryDTO.Id);

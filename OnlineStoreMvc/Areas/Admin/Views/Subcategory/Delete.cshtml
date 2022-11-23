@@ -1,4 +1,4 @@
-﻿@model Subcategory
+﻿@model SubcategoryDTO
 
 <form method="post" asp-action="Delete">
     <input asp-for="Id" hidden/>
@@ -7,7 +7,7 @@
             <h2 class="text-primary">Delete Subcategory</h2>
             <hr />
         </div>
-        @*<div asp-validation-summary="All"></div>*@
+        <div asp-validation-summary="ModelOnly"></div>
         <div class="mb-3">
             <label asp-for="Name"></label>
             <input asp-for="Name" disabled class="form-control"/>

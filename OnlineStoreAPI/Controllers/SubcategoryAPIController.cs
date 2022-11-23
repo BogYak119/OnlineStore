@@ -8,7 +8,7 @@ using System.Net;
 
 namespace OnlineStoreAPI.Controllers
 {
-    [Route("api/SubcategoryAPIController")]
+    [Route("api/SubcategoryAPI")]
     [ApiController]
     public class SubcategoryAPIController : ControllerBase
     {
@@ -107,12 +107,11 @@ namespace OnlineStoreAPI.Controllers
                     new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Category ID is not valid")};
                     return BadRequest(_response);
                 }
-                if (await _repositoryWrapper.Subcategory.GetAsync(c => c.Name == subcategoryCreateDTO.Name) != null
-                    && await _repositoryWrapper.Subcategory.GetAsync(c => c.CategoryId == subcategoryCreateDTO.CategoryId) != null)
+                if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Name == subcategoryCreateDTO.Name && sc.CategoryId == subcategoryCreateDTO.CategoryId) != null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory with the same name already exists") };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryDTO.Name", "Subcategory already exists") };
                     return BadRequest(_response);
                 }
 
@@ -194,12 +193,11 @@ namespace OnlineStoreAPI.Controllers
                     _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "subcategoryDTO is null or id != sbucategoryDTO.id") };
                     return BadRequest(_response);
                 }
-                if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Name == 
-                subcategoryDTO.Name && sc.CategoryId == subcategoryDTO.CategoryId) != null)
+                if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Name == subcategoryDTO.Name && sc.CategoryId == subcategoryDTO.CategoryId) != null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory with the same name already exists") };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryDTO.Name", "Subcategory alredy exists") };
                     return BadRequest(_response);
                 }
 
