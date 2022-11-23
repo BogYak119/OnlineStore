@@ -8,7 +8,7 @@ using System.Net;
 
 namespace OnlineStoreAPI.Controllers
 {
-    [Route("api/ProductAPIController")]
+    [Route("api/ProductAPI")]
     [ApiController]
     public class ProductAPIController : ControllerBase
     {

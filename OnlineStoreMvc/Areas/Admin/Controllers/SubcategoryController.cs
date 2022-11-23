@@ -1,10 +1,15 @@
-﻿using BulkyBookWeb.Areas.Admin.Controllers;
+﻿using AutoMapper;
+using Azure;
+using BulkyBookWeb.Areas.Admin.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models;
+using OnlineStore.Models.DTO;
 using OnlineStore.Models.ViewModels;
+using OnlineStoreMvc.Services.IServices;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -12,140 +17,149 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
 {
     public class SubcategoryController : Controller
     {
-        //private readonly IRepositoryWrapper _repositoryWrapper;
-        //public SubcategoryController(IRepositoryWrapper repositoryWrapper)
-        //{
-        //    _repositoryWrapper = repositoryWrapper;
-        //}
-        //public IActionResult Index()
-        //{
-        //    IEnumerable<Subcategory> subcategoryList = _repositoryWrapper.Subcategory.GetAll();
-        //    return View(subcategoryList);
-        //}
+        private readonly ISubcategoryService _subcategoryService;
+        private readonly ICategoryService _categoryService;
+        private readonly IMapper _mapper;
 
-        ////GET
-        //public IActionResult Create()
-        //{
-        //    SubcategoryVM subcategoryVM = new SubcategoryVM()
-        //    {
-        //        Subcategory = new Subcategory(),
-        //        CategoryList = _repositoryWrapper.Category.GetAll().Select(i => new SelectListItem
-        //        {
-        //            Text = i.Name,
-        //            Value = i.Id.ToString()
-        //        })
-        //    };
-        //    return View(subcategoryVM);
-        //}
+        public SubcategoryController(ISubcategoryService subcategoryService, ICategoryService categoryService, IMapper mapper)
+        {
+            _subcategoryService = subcategoryService;
+            _categoryService = categoryService;
+            _mapper = mapper;
+        }
 
-        ////POST
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]  //protection, not necessary
-        //public IActionResult Create(SubcategoryVM subcategoryVM)
-        //{
-        //    if (_repositoryWrapper.Subcategory.GetFirstOrDefault(sc => sc.Name == subcategoryVM.Subcategory.Name) != null)
-        //    {
-        //        ModelState.AddModelError("Subcategory.Name", "Database already contains subcategory with the same name.");
-        //    }
+        public async Task<IActionResult> Index()
+        {
+            List<SubcategoryDTO> subcategoryList = new List<SubcategoryDTO>();
+            var response = await _subcategoryService.GetAllAsync<APIResponse>();
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        _repositoryWrapper.Subcategory.Add(subcategoryVM.Subcategory);
-        //        _repositoryWrapper.Save();
-        //        TempData["success"] = "Subcategory created successfully";
-        //        return RedirectToAction("Index");
-        //    }
+            if (response != null && response.isSuccess)
+            {
+                subcategoryList = JsonConvert.DeserializeObject<List<SubcategoryDTO>>(Convert.ToString(response.Result));
+            }
+            return View(subcategoryList);
+        }
 
-        //    subcategoryVM.CategoryList = _repositoryWrapper.Category.GetAll().Select(i => new SelectListItem
-        //    {
-        //        Text = i.Name,
-        //        Value = i.Id.ToString()
-        //    });
+        //GET
+        public async Task<IActionResult> Create()
+        {
+            var response = await _categoryService.GetAllAsync<APIResponse>();
+            SubcategoryVM subcategoryVM = new SubcategoryVM()
+            {
+                SubcategoryDTO = new SubcategoryDTO(),
+                CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response.Result)).Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
+            return View(subcategoryVM);
+        }
 
-        //    return View(subcategoryVM);
-        //}
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(SubcategoryVM subcategoryVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var response1 = await _subcategoryService.CreateAsync<APIResponse>(_mapper.Map<SubcategoryCreateDTO>(subcategoryVM.SubcategoryDTO));
+                if (response1 != null && response1.isSuccess)
+                {
+                    TempData["success"] = "Subcategory created successfully";
+                    return RedirectToAction("Index");
+                }
+                foreach (var error in response1.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+            }
 
-        ////GET
-        //public IActionResult Edit(int? id)
-        //{
-        //    if (id == null || id == 0)
-        //    {
-        //        return NotFound();
-        //    }
-        //    SubcategoryVM subcategoryVM = new SubcategoryVM()
-        //    {
-        //        Subcategory = _repositoryWrapper.Subcategory.GetFirstOrDefault(u => u.Id == id),
-        //        CategoryList = _repositoryWrapper.Category.GetAll().Select(i => new SelectListItem
-        //        {
-        //            Text = i.Name,
-        //            Value = i.Id.ToString()
-        //        })
-        //    };
-        //    if (subcategoryVM.Subcategory == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(subcategoryVM);
-        //}
+            var response2 = await _categoryService.GetAllAsync<APIResponse>();
+            subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result)).Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            return View(subcategoryVM);
+        }
 
-        ////POST
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]  //protection, not necessary
-        //public IActionResult Edit(SubcategoryVM subcategoryVM)
-        //{
-        //    if(_repositoryWrapper.Subcategory.GetFirstOrDefault(sc => sc.Name == subcategoryVM.Subcategory.Name) != null)
-        //    {
-        //        ModelState.AddModelError("Subcategory.Name", "Database already contains subcategory with the same name.");
-        //    }
+        //GET
+        public async Task<IActionResult> Edit(int id)
+        {
+            APIResponse response1 = await _subcategoryService.GetAsync<APIResponse>(id);
+            APIResponse response2 = await _categoryService.GetAllAsync<APIResponse>();
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        _repositoryWrapper.Subcategory.Update(subcategoryVM.Subcategory);
-        //        _repositoryWrapper.Save();
-        //        TempData["success"] = "Subcategory updated successfully";
-        //        return RedirectToAction("Index");
-        //    }
+            if (response1.isSuccess && response2.isSuccess)
+            {
+                SubcategoryVM subcategoryVM = new SubcategoryVM()
+                {
+                    SubcategoryDTO = JsonConvert.DeserializeObject<SubcategoryDTO>(Convert.ToString(response1.Result)),
+                    CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result)).Select(i => new SelectListItem
+                    {
+                        Text = i.Name,
+                        Value = i.Id.ToString()
+                    })
+                };
+                return View(subcategoryVM);
+            }
+            return RedirectToAction("Index");       
+        }
 
-        //    subcategoryVM.CategoryList = _repositoryWrapper.Category.GetAll().Select(i => new SelectListItem
-        //    {
-        //        Text = i.Name,
-        //        Value = i.Id.ToString()
-        //    });
 
-        //    return View(subcategoryVM);
-        //}
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(SubcategoryVM subcategoryVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var response1 = await _subcategoryService.UpdateAsync<APIResponse>(subcategoryVM.SubcategoryDTO);
+                if (response1 != null && response1.isSuccess)
+                {
+                    TempData["success"] = "Category updated successfully";
+                    return RedirectToAction("Index");
+                }
 
-        ////GET
-        //public IActionResult Delete(int? id)
-        //{
-        //    if (id == null || id == 0)
-        //    {
-        //        return NotFound();
-        //    }
-        //    Subcategory? subcategoryFromDb = _repositoryWrapper.Subcategory.GetFirstOrDefault(c => c.Id == id);
+                foreach (var error in response1.ErrorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+            }
 
-        //    if (subcategoryFromDb == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(subcategoryFromDb);
-        //}
+            var response2 = await _categoryService.GetAllAsync<APIResponse>();
+            subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result)).Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            return View(subcategoryVM);
+        }
 
-        ////POST
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]  //protection, not necessary
-        //public IActionResult DeletePOST(int? id)
-        //{
-        //    Subcategory? subcategory = _repositoryWrapper.Subcategory.GetFirstOrDefault(c => c.Id == id);
-        //    if (subcategory == null)
-        //    {
-        //        return NotFound();
-        //    }
+        //GET
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = await _subcategoryService.GetAsync<APIResponse>(id);
+            if (response != null && response.isSuccess)
+            {
+                SubcategoryDTO subcategoryDTO = JsonConvert.DeserializeObject<SubcategoryDTO>(Convert.ToString(response.Result));
+                return View(subcategoryDTO);
+            }
+            return NotFound();
+        }
 
-        //    _repositoryWrapper.Subcategory.Remove(subcategory);
-        //    _repositoryWrapper.Save();
-        //    TempData["success"] = "Subcategory deleted successfully";
-        //    return RedirectToAction("Index");
-        //}
+        //POST
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePOST(SubcategoryDTO subcategoryDTO)
+        {
+            var response = await _subcategoryService.DeleteAsync<APIResponse>(subcategoryDTO.Id);
+            if (response != null && response.isSuccess)
+            {
+                TempData["success"] = "Category deleted successfully";
+                return RedirectToAction("Index");
+            }
+            return NotFound();
+        }      
     }
 }

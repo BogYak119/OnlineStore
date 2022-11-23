@@ -8,7 +8,7 @@ using System.Net;
 
 namespace OnlineStoreAPI.Controllers
 {
-    [Route("api/ManufacturerAPIController")]
+    [Route("api/ManufacturerAPI")]
     [ApiController]
     public class ManufacturerAPIController : ControllerBase
     {
@@ -104,7 +104,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer with the same name already exists") };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Name", "Manufacturer with the same name already exists") };
                     return BadRequest(_response);
                 }
 
@@ -191,7 +191,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer with the same name already exists") };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Name", "Manufacturer with the same name already exists") };
                     return BadRequest(_response);
                 }
 

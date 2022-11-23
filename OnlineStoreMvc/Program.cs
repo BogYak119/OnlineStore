@@ -17,6 +17,10 @@ builder.Services.AddAutoMapper(typeof(OnlineStore.Models.DefaultMappingConfig));
 
 builder.Services.AddHttpClient<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddHttpClient<IManufacturerService, ManufacturerService>();
+builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
+builder.Services.AddHttpClient<ISubcategoryService, SubcategoryService>();
+builder.Services.AddScoped<ISubcategoryService, SubcategoryService>();
 
 builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 

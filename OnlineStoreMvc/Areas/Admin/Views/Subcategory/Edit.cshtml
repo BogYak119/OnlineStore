@@ -1,7 +1,7 @@
 ﻿@model SubcategoryVM
 
 <form method="post" asp-action="Edit">
-    <input asp-for="Subcategory.Id" hidden />
+    <input asp-for="SubcategoryDTO.Id" hidden />
     <input asp-for="CategoryList" hidden />
     <div class="border p-3 mt-4">
         <div class="row pb-2">
@@ -10,16 +10,16 @@
         </div>
         <div asp-validation-summary="ModelOnly"></div>
         <div class="mb-3">
-            <label asp-for="Subcategory.Name"></label>
-            <input asp-for="Subcategory.Name" class="form-control" />
-            <span asp-validation-for="Subcategory.Name" class="text-danger"></span>
+            <label asp-for="SubcategoryDTO.Name"></label>
+            <input asp-for="SubcategoryDTO.Name" class="form-control" />
+            <span asp-validation-for="SubcategoryDTO.Name" class="text-danger"></span>
         </div>
         <div class="mb-3 col-6">
-            <label asp-for="Subcategory.CategoryId"></label>
-            <select asp-for="Subcategory.CategoryId" asp-items="@Model.CategoryList" class="form-select">
+            <label asp-for="SubcategoryDTO.CategoryId"></label>
+            <select asp-for="SubcategoryDTO.CategoryId" asp-items="@Model.CategoryList" class="form-select">
                 <option disabled selected>--Select Category--</option>
             </select>
-            <span asp-validation-for="Subcategory.CategoryId" class="text-danger"></span>
+            <span asp-validation-for="SubcategoryDTO.CategoryId" class="text-danger"></span>
         </div>
         <button type="submit" class="btn btn-primary" style="width:150px">Update</button>
         <a asp-controller="Subcategory" asp-action="Index" class="btn btn-secondary" style="width:150px">
