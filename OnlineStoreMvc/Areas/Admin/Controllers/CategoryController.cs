@@ -24,6 +24,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             _mapper = mapper;
         }
 
+
         public async Task<IActionResult> Index()
         {
             List<CategoryDTO> categoryList = new List<CategoryDTO>();
@@ -36,11 +37,13 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return View(categoryList);
         }
 
+
         //GET
         public IActionResult Create()
         {
             return View();
         }
+
 
         //POST
         [HttpPost]
@@ -64,6 +67,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return View(categoryCreateDTO);
         }
 
+
         //GET
         public async Task<IActionResult> Edit(int id)
         {
@@ -75,6 +79,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
             return NotFound();
         }
+
 
         //POST
         [HttpPost]
@@ -98,6 +103,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return View(categoryDTO);
         }
 
+
         //GET
         public async Task<IActionResult> Delete(int id)
         {
@@ -109,6 +115,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
             return NotFound();
         }
+
 
         //POST
         [HttpPost, ActionName("Delete")]
