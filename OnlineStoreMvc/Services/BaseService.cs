@@ -68,8 +68,6 @@ namespace OnlineStoreMvc.Services
                 //have to make it generic in order to return
                 return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(errorResponse));
 
-                //var res = JsonConvert.SerializeObject(errorResponse);
-                //var APIResponse = JsonConvert.DeserializeObject<T>(res);
             }
         }
     }
