@@ -72,6 +72,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             return NotFound();
         }
 
+
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -143,7 +144,6 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                 return View(productVM);
             }
             return NotFound();
-
         }
 
 

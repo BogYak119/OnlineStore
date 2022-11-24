@@ -186,8 +186,7 @@ namespace OnlineStoreAPI.Controllers
                     new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "manufacturerDTO is null or id != manufacturerDTO.id")};
                     return BadRequest(_response);
                 }
-                if (_repositoryWrapper.Manufacturer.GetAsync(m => m.Name == manufacturerDTO.Name, false).Result != null
-                   && _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == id, false).Result.Name != manufacturerDTO.Name)
+                if (_repositoryWrapper.Manufacturer.GetAsync(m => m.Name == manufacturerDTO.Name && m.Id != manufacturerDTO.Id).Result != null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;

@@ -23,11 +23,11 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             List<ManufacturerDTO> manufacturerList = new List<ManufacturerDTO>();
-            var response = await _manufacturerService.GetAllAsync<APIResponse>();
+            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>();
 
-            if (response != null && response.isSuccess)
+            if (manufacturerResponse != null && manufacturerResponse.isSuccess)
             {
-                manufacturerList = JsonConvert.DeserializeObject<List<ManufacturerDTO>>(Convert.ToString(response.Result));
+                manufacturerList = JsonConvert.DeserializeObject<List<ManufacturerDTO>>(Convert.ToString(manufacturerResponse.Result));
             }
             return View(manufacturerList);
         }
@@ -47,14 +47,14 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _manufacturerService.CreateAsync<APIResponse>(manufacturerCreateDTO);
-                if (response != null && response.isSuccess)
+                APIResponse? manufacturerResponse = await _manufacturerService.CreateAsync<APIResponse>(manufacturerCreateDTO);
+                if (manufacturerResponse != null && manufacturerResponse.isSuccess)
                 {
                     TempData["success"] = "Manufacturer created successfully";
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in response.ErrorMessages)
+                foreach (var error in manufacturerResponse.ErrorMessages)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
                 }
@@ -66,10 +66,10 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Edit(int id)
         {
-            var response = await _manufacturerService.GetAsync<APIResponse>(id);
-            if (response != null && response.isSuccess)
+            APIResponse? manufacturerResponse = await _manufacturerService.GetAsync<APIResponse>(id);
+            if (manufacturerResponse != null && manufacturerResponse.isSuccess)
             {
-                ManufacturerDTO manufacturerDTO = JsonConvert.DeserializeObject<ManufacturerDTO>(Convert.ToString(response.Result));
+                ManufacturerDTO manufacturerDTO = JsonConvert.DeserializeObject<ManufacturerDTO>(Convert.ToString(manufacturerResponse.Result));
                 return View(manufacturerDTO);
             }
             return NotFound();
@@ -83,14 +83,14 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _manufacturerService.UpdateAsync<APIResponse>(manufacturerDTO);
-                if (response != null && response.isSuccess)
+                APIResponse? manufacturerResponse = await _manufacturerService.UpdateAsync<APIResponse>(manufacturerDTO);
+                if (manufacturerResponse != null && manufacturerResponse.isSuccess)
                 {
                     TempData["success"] = "Manufacturer updated successfully";
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in response.ErrorMessages)
+                foreach (var error in manufacturerResponse.ErrorMessages)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
                 }
@@ -102,10 +102,10 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Delete(int id)
         {
-            var response = await _manufacturerService.GetAsync<APIResponse>(id);
-            if (response != null && response.isSuccess)
+            APIResponse? manufacturerResponse = await _manufacturerService.GetAsync<APIResponse>(id);
+            if (manufacturerResponse != null && manufacturerResponse.isSuccess)
             {
-                ManufacturerDTO manufacturerDTO = JsonConvert.DeserializeObject<ManufacturerDTO>(Convert.ToString(response.Result));
+                ManufacturerDTO manufacturerDTO = JsonConvert.DeserializeObject<ManufacturerDTO>(Convert.ToString(manufacturerResponse.Result));
                 return View(manufacturerDTO);
             }
             return NotFound();
@@ -117,8 +117,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePOST(ManufacturerDTO manufacturerDTO)
         {
-            var response = await _manufacturerService.DeleteAsync<APIResponse>(manufacturerDTO.Id);
-            if (response != null && response.isSuccess)
+            APIResponse? manufacturerResponse = await _manufacturerService.DeleteAsync<APIResponse>(manufacturerDTO.Id);
+            if (manufacturerResponse != null && manufacturerResponse.isSuccess)
             {
                 TempData["success"] = "Manufacturer deleted successfully";
                 return RedirectToAction("Index");

@@ -28,11 +28,11 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             List<CategoryDTO> categoryList = new List<CategoryDTO>();
-            var response = await _categoryService.GetAllAsync<APIResponse>();
+            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
 
-            if (response != null && response.isSuccess)
+            if (categoryResponse != null && categoryResponse.isSuccess)
             {
-                categoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response.Result));
+                categoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(categoryResponse.Result));
             }
             return View(categoryList);
         }
@@ -52,14 +52,14 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _categoryService.CreateAsync<APIResponse>(categoryCreateDTO);
-                if (response != null && response.isSuccess)
+                APIResponse? categoryResponse = await _categoryService.CreateAsync<APIResponse>(categoryCreateDTO);
+                if (categoryResponse != null && categoryResponse.isSuccess)
                 {
                     TempData["success"] = "Category created successfully";
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in response.ErrorMessages)
+                foreach (var error in categoryResponse.ErrorMessages)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
                 }
@@ -71,10 +71,10 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Edit(int id)
         {
-            var response = await _categoryService.GetAsync<APIResponse>(id);
-            if (response != null && response.isSuccess)
+            APIResponse? categoryResponse = await _categoryService.GetAsync<APIResponse>(id);
+            if (categoryResponse != null && categoryResponse.isSuccess)
             {
-                CategoryDTO categoryDTO = JsonConvert.DeserializeObject<CategoryDTO>(Convert.ToString(response.Result));
+                CategoryDTO categoryDTO = JsonConvert.DeserializeObject<CategoryDTO>(Convert.ToString(categoryResponse.Result));
                 return View(categoryDTO);
             }
             return NotFound();
@@ -88,14 +88,14 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _categoryService.UpdateAsync<APIResponse>(categoryDTO);
-                if (response != null && response.isSuccess)
+                var categoryResponse = await _categoryService.UpdateAsync<APIResponse>(categoryDTO);
+                if (categoryResponse != null && categoryResponse.isSuccess)
                 {
                     TempData["success"] = "Category updated successfully";
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in response.ErrorMessages)
+                foreach (var error in categoryResponse.ErrorMessages)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
                 }
@@ -107,10 +107,10 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Delete(int id)
         {
-            var response = await _categoryService.GetAsync<APIResponse>(id);
-            if (response != null && response.isSuccess)
+            APIResponse? categoryResponse = await _categoryService.GetAsync<APIResponse>(id);
+            if (categoryResponse != null && categoryResponse.isSuccess)
             {
-                CategoryDTO categoryDTO = JsonConvert.DeserializeObject<CategoryDTO>(Convert.ToString(response.Result));
+                CategoryDTO categoryDTO = JsonConvert.DeserializeObject<CategoryDTO>(Convert.ToString(categoryResponse.Result));
                 return View(categoryDTO);
             }
             return NotFound();
@@ -122,8 +122,8 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken] 
         public async Task<IActionResult> DeletePOST(CategoryDTO categoryDTO)
         {
-            var response = await _categoryService.DeleteAsync<APIResponse>(categoryDTO.Id);
-            if (response != null && response.isSuccess)
+            var categoryResponse = await _categoryService.DeleteAsync<APIResponse>(categoryDTO.Id);
+            if (categoryResponse != null && categoryResponse.isSuccess)
             {
                 TempData["success"] = "Category deleted successfully";
                 return RedirectToAction("Index");
