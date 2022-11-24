@@ -33,11 +33,11 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             List<SubcategoryDTO> subcategoryList = new List<SubcategoryDTO>();
-            var response = await _subcategoryService.GetAllAsync<APIResponse>();
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>();
 
-            if (response != null && response.isSuccess)
+            if (subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
-                subcategoryList = JsonConvert.DeserializeObject<List<SubcategoryDTO>>(Convert.ToString(response.Result));
+                subcategoryList = JsonConvert.DeserializeObject<List<SubcategoryDTO>>(Convert.ToString(subcategoryResponse.Result));
             }
             return View(subcategoryList);
         }
@@ -46,13 +46,13 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Create()
         {
-            var response = await _categoryService.GetAllAsync<APIResponse>();
-            if (response != null && response.isSuccess)
+            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
+            if (categoryResponse != null && categoryResponse.isSuccess)
             {
                 SubcategoryVM subcategoryVM = new SubcategoryVM()
                 {
                     SubcategoryDTO = new SubcategoryDTO(),
-                    CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response.Result))
+                    CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(categoryResponse.Result))
                     .Select(i => new SelectListItem
                     {
                         Text = i.Name,
@@ -71,22 +71,22 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response1 = await _subcategoryService.CreateAsync<APIResponse>(_mapper.Map<SubcategoryCreateDTO>(subcategoryVM.SubcategoryDTO));
-                if (response1 != null && response1.isSuccess)
+                APIResponse? subcategoryResponse = await _subcategoryService.CreateAsync<APIResponse>(_mapper.Map<SubcategoryCreateDTO>(subcategoryVM.SubcategoryDTO));
+                if (subcategoryResponse != null && subcategoryResponse.isSuccess)
                 {
                     TempData["success"] = "Subcategory created successfully";
                     return RedirectToAction("Index");
                 }
-                foreach (var error in response1.ErrorMessages)
+                foreach (var error in subcategoryResponse.ErrorMessages)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
                 }
             }
 
-            var response2 = await _categoryService.GetAllAsync<APIResponse>();
-            if (response2 != null && response2.isSuccess)
+            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
+            if (categoryResponse != null && categoryResponse.isSuccess)
             {
-                subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result))
+                subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(categoryResponse.Result))
                 .Select(i => new SelectListItem
                 {
                     Text = i.Name,
@@ -101,15 +101,15 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Edit(int id)
         {
-            APIResponse response1 = await _subcategoryService.GetAsync<APIResponse>(id);
-            APIResponse response2 = await _categoryService.GetAllAsync<APIResponse>();
+            APIResponse subcategoryResponse = await _subcategoryService.GetAsync<APIResponse>(id);
+            APIResponse categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
 
-            if (response1.isSuccess && response2.isSuccess)
+            if (subcategoryResponse != null && categoryResponse != null && subcategoryResponse.isSuccess && categoryResponse.isSuccess)
             {
                 SubcategoryVM subcategoryVM = new SubcategoryVM()
                 {
-                    SubcategoryDTO = JsonConvert.DeserializeObject<SubcategoryDTO>(Convert.ToString(response1.Result)),
-                    CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result))
+                    SubcategoryDTO = JsonConvert.DeserializeObject<SubcategoryDTO>(Convert.ToString(subcategoryResponse.Result)),
+                    CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(categoryResponse.Result))
                     .Select(i => new SelectListItem
                     {
                         Text = i.Name,
@@ -129,22 +129,22 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response1 = await _subcategoryService.UpdateAsync<APIResponse>(subcategoryVM.SubcategoryDTO);
-                if (response1 != null && response1.isSuccess)
+                APIResponse? subcategoryResponse = await _subcategoryService.UpdateAsync<APIResponse>(subcategoryVM.SubcategoryDTO);
+                if (subcategoryResponse != null && subcategoryResponse.isSuccess)
                 {
                     TempData["success"] = "Category updated successfully";
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in response1.ErrorMessages)
+                foreach (var error in subcategoryResponse.ErrorMessages)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
                 }
             }
-            var response2 = await _categoryService.GetAllAsync<APIResponse>();
-            if (response2 != null && response2.isSuccess)
+            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
+            if (categoryResponse != null && categoryResponse.isSuccess)
             {
-                subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(response2.Result))
+                subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(categoryResponse.Result))
                 .Select(i => new SelectListItem
                 {
                     Text = i.Name,
@@ -159,10 +159,10 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Delete(int id)
         {
-            var response = await _subcategoryService.GetAsync<APIResponse>(id);
-            if (response != null && response.isSuccess)
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAsync<APIResponse>(id);
+            if (subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
-                SubcategoryDTO subcategoryDTO = JsonConvert.DeserializeObject<SubcategoryDTO>(Convert.ToString(response.Result));
+                SubcategoryDTO subcategoryDTO = JsonConvert.DeserializeObject<SubcategoryDTO>(Convert.ToString(subcategoryResponse.Result));
                 return View(subcategoryDTO);
             }
             return NotFound();
@@ -174,8 +174,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePOST(SubcategoryDTO subcategoryDTO)
         {
-            var response = await _subcategoryService.DeleteAsync<APIResponse>(subcategoryDTO.Id);
-            if (response != null && response.isSuccess)
+            APIResponse? subcategoryResponse = await _subcategoryService.DeleteAsync<APIResponse>(subcategoryDTO.Id);
+            if (subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
                 TempData["success"] = "Category deleted successfully";
                 return RedirectToAction("Index");

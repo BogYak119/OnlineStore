@@ -114,15 +114,7 @@ namespace OnlineStoreAPI.Controllers
                     new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer ID is not valid") };
                     return BadRequest(_response);
                 }               
-                //if (await _repositoryWrapper.Product.GetAsync(p => p.Id == productCreateDTO.SubcategoryId) == null)
-                //{
-                //    _response.isSuccess = false;
-                //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    _response.ErorrMessages = new List<string> { "Product ID is not valid" };
-                //    return BadRequest(_response);
-                //}
-                if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productCreateDTO.Name) != null
-                   /* && await _repositoryWrapper.Subcategory.GetAsync(c => c.CategoryId == subcategoryCreateDTO.CategoryId) != null*/)
+                if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productCreateDTO.Name) != null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -131,7 +123,6 @@ namespace OnlineStoreAPI.Controllers
                 }
 
                 Product product = _mapper.Map<Product>(productCreateDTO);
-                //product.CategoryId = product.Subcategory.CategoryId;
 
                 await _repositoryWrapper.Product.CreateAsync(product);
                 await _repositoryWrapper.SaveAsync();
@@ -222,7 +213,7 @@ namespace OnlineStoreAPI.Controllers
                     new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer ID is not valid") };
                     return BadRequest(_response);
                 }
-                if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productDTO.Name) != null)
+                if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productDTO.Name && p.Id != productDTO.Id) != null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
