@@ -1,8 +1,7 @@
 ﻿@model ProductVM
 
 <form method="post" asp-action="Edit">
-    <input asp-for="Product.Id" hidden />
-    <input asp-for="CategoryList" hidden />
+    <input asp-for="ProductDTO.Id" hidden />
     <div class="border p-3 mt-4">
         <div class="row pb-2">
             <h2 class="text-primary">Edit Product</h2>
@@ -10,16 +9,45 @@
         </div>
         <div asp-validation-summary="ModelOnly"></div>
         <div class="mb-3">
-            <label asp-for="Product.Name"></label>
-            <input asp-for="Product.Name" class="form-control" />
-            <span asp-validation-for="Product.Name" class="text-danger"></span>
+            <label asp-for="ProductDTO.Name"></label>
+            <input asp-for="ProductDTO.Name" class="form-control" />
+            <span asp-validation-for="ProductDTO.Name" class="text-danger"></span>
         </div>
-        <div class="mb-3 col-6">
-            <label asp-for="Product"></label>
-            <select asp-for="Product" asp-items="@Model.CategoryList" class="form-select">
+        <div class="mb-3">
+            <label asp-for="ProductDTO.Price"></label>
+            <input asp-for="ProductDTO.Price" class="form-control" />
+            <span asp-validation-for="ProductDTO.Price" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ProductDTO.Discount"></label>
+            <input asp-for="ProductDTO.Discount" class="form-control" />
+            <span asp-validation-for="ProductDTO.Discount" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ProductDTO.Description"></label>
+            <input asp-for="ProductDTO.Description" class="form-control" />
+            <span asp-validation-for="ProductDTO.Description" class="text-danger"></span>
+        </div>
+        @*<div class="mb-3 col-6">
+            <label asp-for="ProductDTO.Subcategory.CategoryId"></label>
+            <select asp-for="ProductDTO.Subcategory.Category.Id" asp-items="@Model.CategoryList" class="form-select">
                 <option disabled selected>--Select Category--</option>
             </select>
-            <span asp-validation-for="Product" class="text-danger"></span>
+            <span asp-validation-for="ProductDTO.Subcategory.Category.Id" class="text-danger"></span>
+        </div>*@
+        <div class="mb-3 col-6">
+            <label asp-for="ProductDTO.SubcategoryId"></label>
+            <select asp-for="ProductDTO.SubcategoryId" asp-items="@Model.SubcategoryList" class="form-select">
+                <option disabled selected>--Select Category--</option>
+            </select>
+            <span asp-validation-for="ProductDTO.SubcategoryId" class="text-danger"></span>
+        </div>
+        <div class="mb-3 col-6">
+            <label asp-for="ProductDTO.ManufacturerId"></label>
+            <select asp-for="ProductDTO.ManufacturerId" asp-items="@Model.ManufacturerList" class="form-select">
+                <option disabled selected>--Select Category--</option>
+            </select>
+            <span asp-validation-for="ProductDTO.ManufacturerId" class="text-danger"></span>
         </div>
         <button type="submit" class="btn btn-primary" style="width:150px">Update</button>
         <a asp-controller="Product" asp-action="Index" class="btn btn-secondary" style="width:150px">

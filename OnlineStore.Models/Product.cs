@@ -35,12 +35,12 @@ namespace OnlineStore.Models
         public int SubcategoryId { get; set; }
         [ValidateNever]
         [ForeignKey("SubcategoryId")]
-        public Subcategory Subcategory { get; set; }
+        public virtual Subcategory Subcategory { get; set; }
 
         [Required]
         public int ManufacturerId { get; set; }
         [ValidateNever]
-        public Manufacturer Manufacturer { get; set; }
+        public virtual Manufacturer Manufacturer { get; set; }
 
         public int? Discount { get; set; }
 

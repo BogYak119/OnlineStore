@@ -126,7 +126,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductName", "Product with the same name already exists") };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductDTO.Name", "Product with the same name already exists") };
                     return BadRequest(_response);
                 }
 
@@ -205,7 +205,7 @@ namespace OnlineStoreAPI.Controllers
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductName", "Product ID is not valid") };
+                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductDTO.Name", "Product ID is not valid") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == productDTO.SubcategoryId) == null)
@@ -223,11 +223,10 @@ namespace OnlineStoreAPI.Controllers
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productDTO.Name) != null)
-                //subcategoryDTO.Name && sc.CategoryId == subcategoryDTO.CategoryId) != null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductName", "Product with the same name already exists") };
+                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductDTO.Name", "Product with the same name already exists") };
                     return BadRequest(_response);
                 }
 
