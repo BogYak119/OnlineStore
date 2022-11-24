@@ -29,7 +29,6 @@ namespace OnlineStoreAPI.Controllers
         {
             try
             {
-                _response.isSuccess = true;
                 IEnumerable<Product> productList = await _repositoryWrapper.Product.GetAllAsync();
                 _response.Result = _mapper.Map<List<ProductDTO>>(productList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -39,7 +38,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }
@@ -55,9 +54,7 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (id <= 0)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "id <= 0") };
                     return BadRequest(_response);
                 }
 
@@ -65,13 +62,10 @@ namespace OnlineStoreAPI.Controllers
 
                 if (product == null)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Product not found") };
                     return NotFound(_response);
                 }
 
-                _response.isSuccess = true;
                 _response.Result = _mapper.Map<ProductDTO>(product);
                 _response.StatusCode = HttpStatusCode.OK;
 
@@ -80,7 +74,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }
@@ -95,31 +89,24 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (productCreateDTO == null)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Product is null") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == productCreateDTO.SubcategoryId) == null)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory ID is not valid") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == productCreateDTO.ManufacturerId) == null)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer ID is not valid") };
                     return BadRequest(_response);
-                }               
+                }
                 if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productCreateDTO.Name) != null)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductDTO.Name", "Product with the same name already exists") };
-                    return BadRequest(_response);
+                    ModelState.AddModelError("ErrorMessages", "Product already exists");
+                    return BadRequest(ModelState);
                 }
 
                 Product product = _mapper.Map<Product>(productCreateDTO);
@@ -129,14 +116,13 @@ namespace OnlineStoreAPI.Controllers
 
                 _response.Result = _mapper.Map<ProductDTO>(product);
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.isSuccess = true;
 
                 return CreatedAtRoute("GetProduct", new { id = product.Id }, _response);
             }
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }
@@ -150,13 +136,17 @@ namespace OnlineStoreAPI.Controllers
         {
             try
             {
+                if (id <= 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
                 Product product = await _repositoryWrapper.Product.GetAsync(p => p.Id == id);
 
                 if (product == null)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Product not found") };
                     return NotFound(_response);
                 }
 
@@ -164,14 +154,13 @@ namespace OnlineStoreAPI.Controllers
                 await _repositoryWrapper.SaveAsync();
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.isSuccess = true;
 
                 return Ok(_response);
             }
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }
@@ -185,54 +174,44 @@ namespace OnlineStoreAPI.Controllers
         {
             try
             {
-                if (productDTO == null || id != productDTO.Id)
+                if (productDTO == null || id <= 0 || id != productDTO.Id)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "productDTO is null or id != productDTO.id") };
                     return BadRequest(_response);
                 }
-                if (id <= 0)
-                {
-                    _response.isSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductDTO.Name", "Product ID is not valid") };
-                    return BadRequest(_response);
-                }
-                if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == productDTO.SubcategoryId) == null)
-                {
-                    _response.isSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory ID is not valid") };
-                    return BadRequest(_response);
-                }
-                if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == productDTO.ManufacturerId) == null)
-                {
-                    _response.isSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer ID is not valid") };
-                    return BadRequest(_response);
-                }
+                //if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == productDTO.SubcategoryId) == null)
+                //{
+                //    _response.isSuccess = false;
+                //    _response.StatusCode = HttpStatusCode.BadRequest;
+                //    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory ID is not valid") };
+                //    return BadRequest(_response);
+                //}
+                //if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == productDTO.ManufacturerId) == null)
+                //{
+                //    _response.isSuccess = false;
+                //    _response.StatusCode = HttpStatusCode.BadRequest;
+                //    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer ID is not valid") };
+                //    return BadRequest(_response);
+                //}
                 if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productDTO.Name && p.Id != productDTO.Id) != null)
                 {
                     _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ProductDTO.Name", "Product with the same name already exists") };
-                    return BadRequest(_response);
+                    ModelState.AddModelError("ErrorMessages", "Product already exists");
+                    return BadRequest(ModelState);
                 }
 
                 Product product = _mapper.Map<Product>(productDTO);
                 await _repositoryWrapper.Product.UpdateAsync(product);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.isSuccess = true;
 
                 return Ok(_response);
             }
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }

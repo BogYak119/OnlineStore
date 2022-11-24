@@ -39,6 +39,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             {
                 subcategoryList = JsonConvert.DeserializeObject<List<SubcategoryDTO>>(Convert.ToString(subcategoryResponse.Result));
             }
+
             return View(subcategoryList);
         }
 
@@ -64,6 +65,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             return NotFound();
         }
 
+
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -77,9 +79,12 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     TempData["success"] = "Subcategory created successfully";
                     return RedirectToAction("Index");
                 }
-                foreach (var error in subcategoryResponse.ErrorMessages)
+                if (subcategoryResponse.ErrorMessages.Count > 0)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    foreach (var error in subcategoryResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
             }
 
@@ -92,9 +97,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     Text = i.Name,
                     Value = i.Id.ToString()
                 });
-                return View(subcategoryVM);
             }
-            return NotFound();
+            return View(subcategoryVM);
         }
 
 
@@ -135,10 +139,12 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     TempData["success"] = "Category updated successfully";
                     return RedirectToAction("Index");
                 }
-
-                foreach (var error in subcategoryResponse.ErrorMessages)
+                if (subcategoryResponse.ErrorMessages.Count > 0)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    foreach (var error in subcategoryResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
             }
             APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
@@ -150,9 +156,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     Text = i.Name,
                     Value = i.Id.ToString()
                 });
-                return View(subcategoryVM);
             }
-            return NotFound();
+            return View(subcategoryVM);
         }
 
 

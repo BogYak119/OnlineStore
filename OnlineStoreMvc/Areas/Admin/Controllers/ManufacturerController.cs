@@ -28,8 +28,10 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             if (manufacturerResponse != null && manufacturerResponse.isSuccess)
             {
                 manufacturerList = JsonConvert.DeserializeObject<List<ManufacturerDTO>>(Convert.ToString(manufacturerResponse.Result));
+                return View(manufacturerList);
+
             }
-            return View(manufacturerList);
+            return NotFound(manufacturerList);
         }
 
 
@@ -54,9 +56,12 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in manufacturerResponse.ErrorMessages)
+                if (manufacturerResponse.ErrorMessages.Count > 0)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    foreach (var error in manufacturerResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
             }
             return View(manufacturerCreateDTO);
@@ -90,9 +95,12 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in manufacturerResponse.ErrorMessages)
+                if (manufacturerResponse.ErrorMessages.Count > 0)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    foreach (var error in manufacturerResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
             }
             return View(manufacturerDTO);

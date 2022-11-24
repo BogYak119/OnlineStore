@@ -32,16 +32,32 @@ namespace OnlineStoreAPI.Controllers
                 IEnumerable<Manufacturer> manufacturerList = await _repositoryWrapper.Manufacturer.GetAllAsync();
                 _response.Result = _mapper.Map<List<ManufacturerDTO>>(manufacturerList);
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.isSuccess = true;
+                //_response.isSuccess = true;
 
                 return Ok(_response);
             }
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
+
+            //try
+            //{
+            //    IEnumerable<Manufacturer> manufacturerList = await _repositoryWrapper.Manufacturer.GetAllAsync();
+            //    _response.Result = _mapper.Map<List<ManufacturerDTO>>(manufacturerList);
+            //    _response.StatusCode = HttpStatusCode.OK;
+            //    _response.isSuccess = true;
+
+            //    return Ok(_response);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _response.isSuccess = false;
+            //    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+            //}
+            //return _response;
         }
 
 
@@ -55,9 +71,9 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (id <= 0)
                 {
-                    _response.isSuccess = false;
+                   //_response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "id <= 0") };
+                   // _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "id <= 0") };
                     return BadRequest(_response);
                 }
 
@@ -65,22 +81,22 @@ namespace OnlineStoreAPI.Controllers
 
                 if (manufacturer == null)
                 {
-                    _response.isSuccess = false;
+                    //_response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Manufacturer not found") };
+                    //_response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Manufacturer not found") };
                     return NotFound(_response);
                 }
 
                 _response.Result = _mapper.Map<ManufacturerDTO>(manufacturer);
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.isSuccess = true;
+                //_response.isSuccess = true;
 
                 return Ok(_response);
             }
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }
@@ -95,17 +111,18 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (manufacturerCreateDTO == null)
                 {
-                    _response.isSuccess = false;
+                    //_response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Manufacturer is null") };
+                    //_response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Manufacturer is null") };
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Name == manufacturerCreateDTO.Name) != null)
                 {
-                    _response.isSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Name", "Manufacturer with the same name already exists") };
-                    return BadRequest(_response);
+                    // _response.isSuccess = false;
+                    // _response.StatusCode = HttpStatusCode.BadRequest;
+                    //_response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Name", "Manufacturer with the same name already exists") };
+                    ModelState.AddModelError("ErrorMessages", "Manufacturer already exists");
+                    return BadRequest(ModelState);
                 }
 
                 Manufacturer manufacturer = _mapper.Map<Manufacturer>(manufacturerCreateDTO);
@@ -115,14 +132,14 @@ namespace OnlineStoreAPI.Controllers
 
                 _response.Result = _mapper.Map<ManufacturerDTO>(manufacturer);
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.isSuccess = true;
+                //_response.isSuccess = true;
 
                 return CreatedAtRoute("GetManufacturer", new { id = manufacturer.Id }, _response);
             }
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }
@@ -138,9 +155,7 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (id <= 0)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "id <= 0") };
                     return BadRequest(_response);
                 }
 
@@ -148,9 +163,7 @@ namespace OnlineStoreAPI.Controllers
 
                 if (manufacturer == null)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "Manufacturer not found") };
                     return NotFound(_response);
                 }
 
@@ -165,7 +178,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }
@@ -181,17 +194,14 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (manufacturerDTO == null || id != manufacturerDTO.Id)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", "manufacturerDTO is null or id != manufacturerDTO.id")};
                     return BadRequest(_response);
                 }
                 if (_repositoryWrapper.Manufacturer.GetAsync(m => m.Name == manufacturerDTO.Name && m.Id != manufacturerDTO.Id).Result != null)
                 {
-                    _response.isSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Name", "Manufacturer with the same name already exists") };
-                    return BadRequest(_response);
+                    ModelState.AddModelError("ErrorMessages", "Manufacturer already exists");
+                    return BadRequest(ModelState);
                 }
 
                 Manufacturer manufacturer = _mapper.Map<Manufacturer>(manufacturerDTO);
@@ -205,7 +215,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) };
+                _response.ErrorMessages = new List<string> { new string(ex.Message) };
             }
             return _response;
         }
