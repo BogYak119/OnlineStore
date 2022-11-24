@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")));
+    builder.Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
 builder.Services.AddAutoMapper(typeof(OnlineStore.Models.DefaultMappingConfig));
 builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 

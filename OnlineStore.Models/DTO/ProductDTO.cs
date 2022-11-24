@@ -28,13 +28,13 @@ namespace OnlineStore.Models.DTO
         [Display(Name = "Subcategory")]
         public int SubcategoryId { get; set; }
         [ValidateNever]
-        //[ForeignKey("SubcategoryId")]
-        //public Subcategory Subcategory { get; set; }
+        [ForeignKey("SubcategoryId")]
+        public Subcategory Subcategory { get; set; }
 
         [Required]
         public int ManufacturerId { get; set; }
-        //[ValidateNever]
-        //public Manufacturer Manufacturer { get; set; }
+        [ValidateNever]
+        public Manufacturer Manufacturer { get; set; }
 
         public int? Discount { get; set; }
 

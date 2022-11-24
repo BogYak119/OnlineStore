@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Product>
+﻿@model List<ProductDTO>
 
 @{
     ViewData["Title"] = "Index";
@@ -77,10 +77,10 @@
                     </td>
                     <td>
                         <div class="w-75 btn-group" role="group">
-                            <a asp-controller="Product" asp-action="Edit" asp-route-id=><i class="bi bi-pencil-square"></i>Edit</a>
+                            <a asp-controller="Product" asp-action="Edit" asp-route-id=@product.Id><i class="bi bi-pencil-square"></i>Edit</a>
                         </div>
                         <div class="w-75 btn-group">
-                            <a asp-controller="Product" asp-action="Delete" asp-route-id=.Id><i class="bi bi-trash"></i>Delete</a>
+                            <a asp-controller="Product" asp-action="Delete" asp-route-id=@product.Id><i class="bi bi-trash"></i>Delete</a>
                         </div>
                     </td>
                 </tr>
