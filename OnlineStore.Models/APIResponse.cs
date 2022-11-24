@@ -10,9 +10,9 @@ namespace OnlineStore.Models
     public class APIResponse
     {
         public HttpStatusCode StatusCode { get; set; }
-        public bool isSuccess { get; set; }
+        public bool isSuccess { get; set; } = true;
 
-        public List<KeyValuePair<string, string>> ErrorMessages { get; set; }
+        public List<string> ErrorMessages { get; set; }
         public object Result { get; set; }
     }
 }

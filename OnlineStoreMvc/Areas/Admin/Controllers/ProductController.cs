@@ -33,7 +33,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             List<ProductDTO> productList = new List<ProductDTO>();
-            var response = await _productService.GetAllAsync<APIResponse>();
+            APIResponse? response = await _productService.GetAllAsync<APIResponse>();
 
             if (response != null && response.isSuccess)
             {
@@ -46,8 +46,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Create()
         {
-            var manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>();
-            var subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>();
+            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>();
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>();
             if (manufacturerResponse != null && manufacturerResponse.isSuccess
                 && subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
@@ -86,9 +86,12 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     TempData["success"] = "Product created successfully";
                     return RedirectToAction("Index");
                 }
-                foreach (var error in productResponse.ErrorMessages)
+                if (productResponse.ErrorMessages.Count > 0)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    foreach (var error in productResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
             }
 
@@ -110,8 +113,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                         Value = i.Id.ToString()
                     });
                 return View(productVM);
-            };
-            return NotFound();
+            }
+            return RedirectToAction("Index");
         }
 
 
@@ -143,7 +146,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                 };
                 return View(productVM);
             }
-            return NotFound();
+            return RedirectToAction("Index");
         }
 
 
@@ -154,15 +157,18 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response1 = await _productService.UpdateAsync<APIResponse>(productVM.ProductDTO);
-                if (response1 != null && response1.isSuccess)
+                APIResponse? productResponse = await _productService.UpdateAsync<APIResponse>(productVM.ProductDTO);
+                if (productResponse != null && productResponse.isSuccess)
                 {
                     TempData["success"] = "Product updated successfully";
                     return RedirectToAction("Index");
                 }
-                foreach (var error in response1.ErrorMessages)
+                if (productResponse.ErrorMessages.Count > 0)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    foreach (var error in productResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
             }
 
@@ -183,10 +189,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                         Text = i.Name,
                         Value = i.Id.ToString()
                     });
-
-                return View(productVM);
             }
-            return NotFound();
+            return View(productVM);
         }
 
 
@@ -215,6 +219,6 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
             return NotFound();
-        }       
+        }
     }
 }

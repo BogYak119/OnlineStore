@@ -34,6 +34,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             {
                 categoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(categoryResponse.Result));
             }
+
             return View(categoryList);
         }
 
@@ -59,9 +60,12 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in categoryResponse.ErrorMessages)
+                if(categoryResponse.ErrorMessages.Count > 0)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    foreach (var error in categoryResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
             }
             return View(categoryCreateDTO);
@@ -95,10 +99,17 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                foreach (var error in categoryResponse.ErrorMessages)
+                if (categoryResponse.ErrorMessages.Count > 0)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    foreach (var error in categoryResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
+                //foreach (var error in categoryResponse.ErrorMessages)
+                //{
+                //    ModelState.AddModelError(error.Key, error.Value);
+                //}
             }
             return View(categoryDTO);
         }

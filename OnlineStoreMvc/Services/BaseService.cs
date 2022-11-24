@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using OnlineStore.Models;
 using OnlineStoreMvc.Models;
 using OnlineStoreMvc.Services.IServices;
+using System.Net;
 using System.Text;
 
 namespace OnlineStoreMvc.Services
@@ -53,22 +54,36 @@ namespace OnlineStoreMvc.Services
                 HttpResponseMessage response = null;
                 response = await client.SendAsync(requestMessage);
                 var responseContent = await response.Content.ReadAsStringAsync();
-                var APIResponse = JsonConvert.DeserializeObject<T>(responseContent);
+                try
+                {
+                    APIResponse APIResponse = JsonConvert.DeserializeObject<APIResponse>(responseContent);
+                    if (response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        APIResponse.StatusCode = HttpStatusCode.BadRequest;
+                        APIResponse.isSuccess = false;
+                        return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(APIResponse));
 
-                return APIResponse;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var errorResponse = JsonConvert.DeserializeObject<T>(responseContent);
+                    return errorResponse;
+                }
+                return JsonConvert.DeserializeObject<T>(responseContent);
+
             }
             catch (Exception ex)
             {
-                APIResponse errorResponse = new APIResponse
+                APIResponse errorResponse = new APIResponse()
                 {
                     isSuccess = false,
-                    ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) }
-            };
-                
-                //have to make it generic in order to return
+                    ErrorMessages = new List<string> { new string(ex.Message) }
+                    //ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("error", ex.ToString()) }
+                };
                 return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(errorResponse));
-
-            }
+            };
         }
     }
 }
+
