@@ -54,7 +54,6 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (id <= 0)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
@@ -62,7 +61,6 @@ namespace OnlineStoreAPI.Controllers
 
                 if (subcategory == null)
                 {
-                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
@@ -89,17 +87,14 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (subcategoryCreateDTO == null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Category.GetAsync(c => c.Id == subcategoryCreateDTO.CategoryId) == null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Name == subcategoryCreateDTO.Name && sc.CategoryId == subcategoryCreateDTO.CategoryId) != null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     ModelState.AddModelError("ErrorMessages", "Subcategory already exists");
                     return BadRequest(ModelState);
                 }
@@ -133,7 +128,6 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (id <= 0)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
@@ -141,7 +135,6 @@ namespace OnlineStoreAPI.Controllers
 
                 if (subcategory == null)
                 {
-                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
@@ -171,12 +164,10 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (subcategoryDTO == null || id <= 0 || id != subcategoryDTO.Id)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Name == subcategoryDTO.Name && sc.CategoryId == subcategoryDTO.CategoryId) != null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     ModelState.AddModelError("ErrorMessages", "Subcategory already exists");
                     return BadRequest(ModelState);
                 }

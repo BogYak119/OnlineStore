@@ -54,7 +54,6 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (id <= 0)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
@@ -62,7 +61,6 @@ namespace OnlineStoreAPI.Controllers
 
                 if (product == null)
                 {
-                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
@@ -89,22 +87,18 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (productCreateDTO == null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == productCreateDTO.SubcategoryId) == null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == productCreateDTO.ManufacturerId) == null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productCreateDTO.Name) != null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     ModelState.AddModelError("ErrorMessages", "Product already exists");
                     return BadRequest(ModelState);
                 }
@@ -138,7 +132,6 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (id <= 0)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
@@ -146,7 +139,6 @@ namespace OnlineStoreAPI.Controllers
 
                 if (product == null)
                 {
-                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
@@ -176,27 +168,11 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (productDTO == null || id <= 0 || id != productDTO.Id)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                //if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Id == productDTO.SubcategoryId) == null)
-                //{
-                //    _response.isSuccess = false;
-                //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("SubcategoryName", "Subcategory ID is not valid") };
-                //    return BadRequest(_response);
-                //}
-                //if (await _repositoryWrapper.Manufacturer.GetAsync(m => m.Id == productDTO.ManufacturerId) == null)
-                //{
-                //    _response.isSuccess = false;
-                //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("ManufacturerName", "Manufacturer ID is not valid") };
-                //    return BadRequest(_response);
-                //}
+
                 if (await _repositoryWrapper.Product.GetAsync(p => p.Name == productDTO.Name && p.Id != productDTO.Id) != null)
                 {
-                    _response.isSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     ModelState.AddModelError("ErrorMessages", "Product already exists");
                     return BadRequest(ModelState);
                 }
