@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure;
 using BulkyBookWeb.Areas.Admin.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,10 +13,12 @@ using OnlineStore.Models.DTO;
 using OnlineStore.Models.ViewModels;
 using OnlineStoreMvc.Services.IServices;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 
 namespace OnlineStoreMvc.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class SubcategoryController : Controller
     {
         private readonly ISubcategoryService _subcategoryService;

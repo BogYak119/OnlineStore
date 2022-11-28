@@ -10,9 +10,11 @@ using OnlineStoreMvc.Services.IServices;
 using AutoMapper;
 using OnlineStore.Models.DTO;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
-{
+{   
+    [Authorize(Roles = "admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -23,7 +25,6 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             _categoryService = categoryService;
             _mapper = mapper;
         }
-
 
         public async Task<IActionResult> Index()
         {

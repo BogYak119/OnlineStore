@@ -5,7 +5,7 @@ using OnlineStore.Models;
 using OnlineStoreMvc.Services.IServices;
 using AutoMapper;
 
-namespace OnlineStoreMvc.Areas.Customer.Controllers
+namespace OnlineStoreMvc.Controllers
 {
     public class HomeController : Controller
     {

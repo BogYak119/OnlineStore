@@ -5,11 +5,14 @@ using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models.DTO;
 using OnlineStore.Models;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace OnlineStoreAPI.Controllers
 {
     [Route("api/ProductAPI")]
     [ApiController]
+    [Authorize(Roles = "admin")]
     public class ProductAPIController : ControllerBase
     {
         protected APIResponse _response;
@@ -38,7 +41,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -72,7 +75,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -116,7 +119,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -152,7 +155,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -187,7 +190,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }

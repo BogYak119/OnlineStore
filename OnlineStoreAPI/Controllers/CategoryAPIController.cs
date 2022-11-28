@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -74,7 +75,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -110,7 +111,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -146,7 +147,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -180,7 +181,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }

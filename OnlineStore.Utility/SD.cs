@@ -15,5 +15,7 @@ namespace OnlineStore.Utility
             PUT,
             DELETE
         }
+
+        public static string SessionToken = "JWTToken";
     }
 }

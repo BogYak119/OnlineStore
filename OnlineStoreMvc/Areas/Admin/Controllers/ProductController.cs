@@ -9,9 +9,12 @@ using Newtonsoft.Json;
 using OnlineStore.Models.DTO;
 using OnlineStoreMvc.Services.IServices;
 using OnlineStoreMvc.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace OnlineStoreMvc.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;

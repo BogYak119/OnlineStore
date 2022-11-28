@@ -38,7 +38,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -72,7 +72,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -112,7 +112,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -148,7 +148,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -182,7 +182,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }

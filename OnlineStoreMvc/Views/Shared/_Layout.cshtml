@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using OnlineStore.Utility
+@inject IHttpContextAccessor httpAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -21,27 +24,41 @@
                 <div class="collapse navbar-collapse" id="navbarColor02">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @*<li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                        </li>*@
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Managment</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Subcategory" asp-action="Index">Subcategory</a>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Manufacturer" asp-action="Index">Manufacturer</a>
-                                <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
 
-                                @*<a class="dropdown-item" href="#">Something else here</a>
+                        @if (httpAccessor.HttpContext.Session.GetString(SD.SessionToken) != null
+                        && httpAccessor.HttpContext.Session.GetString(SD.SessionToken).Length > 0)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Managment</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Subcategory" asp-action="Index">Subcategory</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Manufacturer" asp-action="Index">Manufacturer</a>
+                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
+
+                                    @*<a class="dropdown-item" href="#">Something else here</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#">Separated link</a>*@
-                            </div>
-                        </li>
+                                </div>
+                            </li>
+                        }5
                     </ul>
                     @*<form class="d-flex">
                     <input class="form-control me-sm-2" type="text" placeholder="Search">

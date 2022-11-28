@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models;
 using OnlineStore.Models.DTO;
 using OnlineStoreMvc.Services.IServices;
+using System.Data;
 
 namespace OnlineStoreMvc.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class ManufacturerController : Controller
     {
         private readonly IManufacturerService _manufacturerService;
