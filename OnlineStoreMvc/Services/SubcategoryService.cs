@@ -17,50 +17,55 @@ namespace OnlineStoreMvc.Services
             storeAPIUrl = configuration.GetValue<string>("ServiceUrls:OnlineStoreAPI");
         }
 
-        public Task<T> CreateAsync<T>(SubcategoryCreateDTO dto)
+        public Task<T> CreateAsync<T>(SubcategoryCreateDTO dto, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.POST,
                 Data = dto,
-                Url = storeAPIUrl + "/api/SubcategoryAPI"
+                Url = storeAPIUrl + "/api/SubcategoryAPI",
+                Token = token
             });
         }
 
-        public Task<T> DeleteAsync<T>(int id)
+        public Task<T> DeleteAsync<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.DELETE,
-                Url = storeAPIUrl + "/api/SubcategoryAPI/" + id
+                Url = storeAPIUrl + "/api/SubcategoryAPI/" + id,
+                Token = token
             });
         }
 
-        public Task<T> GetAllAsync<T>()
+        public Task<T> GetAllAsync<T>(string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = storeAPIUrl + "/api/SubcategoryAPI"
+                Url = storeAPIUrl + "/api/SubcategoryAPI",
+                Token = token
             });
         }
 
-        public Task<T> GetAsync<T>(int id)
+        public Task<T> GetAsync<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = storeAPIUrl + "/api/SubcategoryAPI/" + id
+                Url = storeAPIUrl + "/api/SubcategoryAPI/" + id,
+                Token = token
             });
         }
 
-        public Task<T> UpdateAsync<T>(SubcategoryDTO dto)
+        public Task<T> UpdateAsync<T>(SubcategoryDTO dto, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.PUT,
                 Data = dto,
-                Url = storeAPIUrl + "/api/SubcategoryAPI/" + dto.Id
+                Url = storeAPIUrl + "/api/SubcategoryAPI/" + dto.Id,
+                Token = token
             });
         }
     }

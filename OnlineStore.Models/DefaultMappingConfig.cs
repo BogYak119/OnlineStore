@@ -31,6 +31,7 @@ namespace OnlineStore.Models
             CreateMap<Product, ProductDTO>().ReverseMap();
             CreateMap<Product, ProductCreateDTO>().ReverseMap();
             CreateMap<ProductDTO, ProductCreateDTO>().ReverseMap();
+            
         }
     }
 }

@@ -10,6 +10,7 @@ namespace OnlineStore.DataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {
+        public DbSet<LocalUser> LocalUsers { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<Manufacturer> Manufacturers { get; set; }

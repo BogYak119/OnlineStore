@@ -1,4 +1,5 @@
-﻿using static OnlineStore.Utility.SD;
+﻿using Microsoft.CodeAnalysis.Options;
+using static OnlineStore.Utility.SD;
 
 namespace OnlineStoreMvc.Models
 {
@@ -7,5 +8,6 @@ namespace OnlineStoreMvc.Models
         public ApiType ApiType { get; set; } = ApiType.GET;
         public string Url { get; set; }
         public object Data { get; set; }
+        public string Token { get; set; }
     }
 }

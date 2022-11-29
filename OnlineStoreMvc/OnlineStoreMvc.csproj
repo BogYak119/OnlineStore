@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Customer\Controllers\" />
     <Folder Include="Areas\Customer\Models\" />
     <Folder Include="Areas\Support\Controllers\" />
     <Folder Include="Areas\Support\Models\" />

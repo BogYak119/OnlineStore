@@ -9,9 +9,13 @@ using Newtonsoft.Json;
 using OnlineStore.Models.DTO;
 using OnlineStoreMvc.Services.IServices;
 using OnlineStoreMvc.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
+using OnlineStore.Utility;
 
 namespace OnlineStoreMvc.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
@@ -33,7 +37,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             List<ProductDTO> productList = new List<ProductDTO>();
-            APIResponse? response = await _productService.GetAllAsync<APIResponse>();
+            APIResponse? response = await _productService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
 
             if (response != null && response.isSuccess)
             {
@@ -46,8 +50,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Create()
         {
-            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>();
-            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>();
+            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (manufacturerResponse != null && manufacturerResponse.isSuccess
                 && subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
@@ -80,7 +84,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                APIResponse? productResponse = await _productService.CreateAsync<APIResponse>(_mapper.Map<ProductCreateDTO>(productVM.ProductDTO));
+                APIResponse? productResponse = await _productService.CreateAsync<APIResponse>(_mapper.Map<ProductCreateDTO>(productVM.ProductDTO), HttpContext.Session.GetString(SD.SessionToken));
                 if (productResponse != null && productResponse.isSuccess)
                 {
                     TempData["success"] = "Product created successfully";
@@ -95,8 +99,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                 }
             }
 
-            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>();
-            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>();
+            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (manufacturerResponse != null && manufacturerResponse.isSuccess
                  && subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
@@ -121,9 +125,9 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Edit(int id)
         {
-            APIResponse? productResponse = await _productService.GetAsync<APIResponse>(id);
-            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>();
-            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>();
+            APIResponse? productResponse = await _productService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
+            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (productResponse != null && productResponse.isSuccess
                 && manufacturerResponse != null && manufacturerResponse.isSuccess
                 && subcategoryResponse != null && subcategoryResponse.isSuccess)
@@ -157,7 +161,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                APIResponse? productResponse = await _productService.UpdateAsync<APIResponse>(productVM.ProductDTO);
+                APIResponse? productResponse = await _productService.UpdateAsync<APIResponse>(productVM.ProductDTO, HttpContext.Session.GetString(SD.SessionToken));
                 if (productResponse != null && productResponse.isSuccess)
                 {
                     TempData["success"] = "Product updated successfully";
@@ -172,8 +176,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                 }
             }
 
-            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>();
-            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>();
+            APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (manufacturerResponse != null && manufacturerResponse.isSuccess
                  && subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
@@ -197,7 +201,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Delete(int id)
         {
-            var response = await _productService.GetAsync<APIResponse>(id);
+            var response = await _productService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 ProductDTO productDTO = JsonConvert.DeserializeObject<ProductDTO>(Convert.ToString(response.Result));
@@ -212,7 +216,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePOST(ProductDTO productDTO)
         {
-            var response = await _productService.DeleteAsync<APIResponse>(productDTO.Id);
+            var response = await _productService.DeleteAsync<APIResponse>(productDTO.Id, HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 TempData["success"] = "Product deleted successfully";

@@ -4,8 +4,9 @@ using OnlineStore.Models.DTO;
 using OnlineStore.Models;
 using OnlineStoreMvc.Services.IServices;
 using AutoMapper;
+using OnlineStore.Utility;
 
-namespace OnlineStoreMvc.Areas.Customer.Controllers
+namespace OnlineStoreMvc.Controllers
 {
     public class HomeController : Controller
     {
@@ -20,7 +21,7 @@ namespace OnlineStoreMvc.Areas.Customer.Controllers
         public async Task<IActionResult> Index()
         {
             List<ProductDTO> productList = new List<ProductDTO>();
-            var response = await _productService.GetAllAsync<APIResponse>();
+            var response = await _productService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
 
             if (response != null && response.isSuccess)
             {

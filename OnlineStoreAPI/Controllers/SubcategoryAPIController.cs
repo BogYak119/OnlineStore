@@ -5,6 +5,8 @@ using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models.DTO;
 using OnlineStore.Models;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace OnlineStoreAPI.Controllers
 {
@@ -38,7 +40,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -54,7 +56,6 @@ namespace OnlineStoreAPI.Controllers
             {
                 if (id <= 0)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
@@ -62,7 +63,6 @@ namespace OnlineStoreAPI.Controllers
 
                 if (subcategory == null)
                 {
-                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
@@ -74,7 +74,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -83,23 +83,21 @@ namespace OnlineStoreAPI.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<APIResponse>> CreateSubcategory([FromBody] SubcategoryCreateDTO subcategoryCreateDTO)
         {
             try
             {
                 if (subcategoryCreateDTO == null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Category.GetAsync(c => c.Id == subcategoryCreateDTO.CategoryId) == null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Name == subcategoryCreateDTO.Name && sc.CategoryId == subcategoryCreateDTO.CategoryId) != null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     ModelState.AddModelError("ErrorMessages", "Subcategory already exists");
                     return BadRequest(ModelState);
                 }
@@ -117,7 +115,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -127,13 +125,13 @@ namespace OnlineStoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<APIResponse>> DeleteSubcategory(int id)
         {
             try
             {
                 if (id <= 0)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
@@ -141,7 +139,6 @@ namespace OnlineStoreAPI.Controllers
 
                 if (subcategory == null)
                 {
-                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
@@ -155,7 +152,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }
@@ -165,18 +162,17 @@ namespace OnlineStoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<APIResponse>> UpdateSubcategory(int id, [FromBody] SubcategoryDTO subcategoryDTO)
         {
             try
             {
                 if (subcategoryDTO == null || id <= 0 || id != subcategoryDTO.Id)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
                 if (await _repositoryWrapper.Subcategory.GetAsync(sc => sc.Name == subcategoryDTO.Name && sc.CategoryId == subcategoryDTO.CategoryId) != null)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
                     ModelState.AddModelError("ErrorMessages", "Subcategory already exists");
                     return BadRequest(ModelState);
                 }
@@ -191,7 +187,7 @@ namespace OnlineStoreAPI.Controllers
             catch (Exception ex)
             {
                 _response.isSuccess = false;
-                _response.ErrorMessages = new List<string> { new string(ex.Message) };
+                _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
         }

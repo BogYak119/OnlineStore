@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure;
 using BulkyBookWeb.Areas.Admin.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,12 +11,15 @@ using OnlineStore.DataAccess.Repository.IRepository;
 using OnlineStore.Models;
 using OnlineStore.Models.DTO;
 using OnlineStore.Models.ViewModels;
+using OnlineStore.Utility;
 using OnlineStoreMvc.Services.IServices;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 
 namespace OnlineStoreMvc.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class SubcategoryController : Controller
     {
         private readonly ISubcategoryService _subcategoryService;
@@ -33,7 +37,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             List<SubcategoryDTO> subcategoryList = new List<SubcategoryDTO>();
-            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>();
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
 
             if (subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
@@ -47,7 +51,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Create()
         {
-            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
+            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (categoryResponse != null && categoryResponse.isSuccess)
             {
                 SubcategoryVM subcategoryVM = new SubcategoryVM()
@@ -73,7 +77,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                APIResponse? subcategoryResponse = await _subcategoryService.CreateAsync<APIResponse>(_mapper.Map<SubcategoryCreateDTO>(subcategoryVM.SubcategoryDTO));
+                APIResponse? subcategoryResponse = await _subcategoryService.CreateAsync<APIResponse>(_mapper.Map<SubcategoryCreateDTO>(subcategoryVM.SubcategoryDTO), HttpContext.Session.GetString(SD.SessionToken));
                 if (subcategoryResponse != null && subcategoryResponse.isSuccess)
                 {
                     TempData["success"] = "Subcategory created successfully";
@@ -88,7 +92,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                 }
             }
 
-            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
+            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (categoryResponse != null && categoryResponse.isSuccess)
             {
                 subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(categoryResponse.Result))
@@ -105,8 +109,8 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Edit(int id)
         {
-            APIResponse subcategoryResponse = await _subcategoryService.GetAsync<APIResponse>(id);
-            APIResponse categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
+            APIResponse subcategoryResponse = await _subcategoryService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
+            APIResponse categoryResponse = await _categoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
 
             if (subcategoryResponse != null && categoryResponse != null && subcategoryResponse.isSuccess && categoryResponse.isSuccess)
             {
@@ -133,7 +137,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                APIResponse? subcategoryResponse = await _subcategoryService.UpdateAsync<APIResponse>(subcategoryVM.SubcategoryDTO);
+                APIResponse? subcategoryResponse = await _subcategoryService.UpdateAsync<APIResponse>(subcategoryVM.SubcategoryDTO, HttpContext.Session.GetString(SD.SessionToken));
                 if (subcategoryResponse != null && subcategoryResponse.isSuccess)
                 {
                     TempData["success"] = "Category updated successfully";
@@ -147,7 +151,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                     }
                 }
             }
-            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>();
+            APIResponse? categoryResponse = await _categoryService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (categoryResponse != null && categoryResponse.isSuccess)
             {
                 subcategoryVM.CategoryList = JsonConvert.DeserializeObject<List<CategoryDTO>>(Convert.ToString(categoryResponse.Result))
@@ -164,7 +168,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //GET
         public async Task<IActionResult> Delete(int id)
         {
-            APIResponse? subcategoryResponse = await _subcategoryService.GetAsync<APIResponse>(id);
+            APIResponse? subcategoryResponse = await _subcategoryService.GetAsync<APIResponse>(id, HttpContext.Session.GetString(SD.SessionToken));
             if (subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
                 SubcategoryDTO subcategoryDTO = JsonConvert.DeserializeObject<SubcategoryDTO>(Convert.ToString(subcategoryResponse.Result));
@@ -179,7 +183,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePOST(SubcategoryDTO subcategoryDTO)
         {
-            APIResponse? subcategoryResponse = await _subcategoryService.DeleteAsync<APIResponse>(subcategoryDTO.Id);
+            APIResponse? subcategoryResponse = await _subcategoryService.DeleteAsync<APIResponse>(subcategoryDTO.Id, HttpContext.Session.GetString(SD.SessionToken));
             if (subcategoryResponse != null && subcategoryResponse.isSuccess)
             {
                 TempData["success"] = "Category deleted successfully";
