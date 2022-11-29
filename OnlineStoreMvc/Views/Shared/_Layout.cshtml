@@ -33,6 +33,22 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
                             </li>
+                            @if (User.IsInRole("admin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Managment</a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Subcategory" asp-action="Index">Subcategory</a>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Manufacturer" asp-action="Index">Manufacturer</a>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
+
+                                        @*<a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Separated link</a>*@
+                                    </div>
+                                </li>
+                            }
                         }
                         else
                         {
@@ -42,23 +58,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
                             </li>
-                        }
-                        @if (User.IsInRole("admin"))
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Managment</a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Subcategory" asp-action="Index">Subcategory</a>
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Manufacturer" asp-action="Index">Manufacturer</a>
-                                    <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
-
-                                    @*<a class="dropdown-item" href="#">Something else here</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Separated link</a>*@
-                                </div>
-                            </li>
-                        }5
+                        }                        
                     </ul>
                     @*<form class="d-flex">
                     <input class="form-control me-sm-2" type="text" placeholder="Search">

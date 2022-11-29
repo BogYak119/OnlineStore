@@ -12,7 +12,6 @@ namespace OnlineStoreAPI.Controllers
 {
     [Route("api/ProductAPI")]
     [ApiController]
-    [Authorize(Roles = "admin")]
     public class ProductAPIController : ControllerBase
     {
         protected APIResponse _response;
@@ -84,6 +83,7 @@ namespace OnlineStoreAPI.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<APIResponse>> CreateProduct([FromBody] ProductCreateDTO productCreateDTO)
         {
             try
@@ -129,6 +129,7 @@ namespace OnlineStoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<APIResponse>> DeleteProduct(int id)
         {
             try
@@ -165,6 +166,7 @@ namespace OnlineStoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<APIResponse>> UpdateProduct(int id, [FromBody] ProductDTO productDTO)
         {
             try

@@ -4,10 +4,10 @@ namespace OnlineStoreMvc.Services.IServices
 {
     public interface ISubcategoryService
     {
-        Task<T> GetAllAsync<T>();
-        Task<T> GetAsync<T>(int id);
-        Task<T> CreateAsync<T>(SubcategoryCreateDTO dto);
-        Task<T> UpdateAsync<T>(SubcategoryDTO dto);
-        Task<T> DeleteAsync<T>(int id);
+        Task<T> GetAllAsync<T>(string token);
+        Task<T> GetAsync<T>(int id, string token);
+        Task<T> CreateAsync<T>(SubcategoryCreateDTO dto, string token);
+        Task<T> UpdateAsync<T>(SubcategoryDTO dto, string token);
+        Task<T> DeleteAsync<T>(int id, string token);
     }
 }

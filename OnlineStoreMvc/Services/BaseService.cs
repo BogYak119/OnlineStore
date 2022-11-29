@@ -4,6 +4,7 @@ using OnlineStore.Models;
 using OnlineStoreMvc.Models;
 using OnlineStoreMvc.Services.IServices;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace OnlineStoreMvc.Services
@@ -52,6 +53,12 @@ namespace OnlineStoreMvc.Services
                 }
 
                 HttpResponseMessage response = null;
+
+                if (!string.IsNullOrEmpty(request.Token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", request.Token);
+                }
+
                 response = await client.SendAsync(requestMessage);
                 var responseContent = await response.Content.ReadAsStringAsync();
                 try
