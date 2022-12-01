@@ -51,7 +51,7 @@ namespace OnlineStoreAPI.Controllers
                 return BadRequest(_response);
             }
 
-            LocalUser? user = await _userRepository.Register(registerRequstDTO);
+            var user = await _userRepository.Register(registerRequstDTO);
 
             if(user == null)
             {

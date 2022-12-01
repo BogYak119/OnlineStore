@@ -6,6 +6,7 @@ using OnlineStore.Models;
 using OnlineStore.Models.DTO;
 using OnlineStore.Utility;
 using OnlineStoreMvc.Services.IServices;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace OnlineStoreMvc.Controllers
@@ -36,11 +37,14 @@ namespace OnlineStoreMvc.Controllers
             {
                 LoginResponseDTO loginResponse = JsonConvert.DeserializeObject<LoginResponseDTO>(Convert.ToString(response.Result));
 
+                var handler = new JwtSecurityTokenHandler();
+                var jwt = handler.ReadJwtToken(loginResponse.Token);
+
                 var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                identity.AddClaim(new Claim(ClaimTypes.Name, loginResponse.User.Name));
-                identity.AddClaim(new Claim(ClaimTypes.Role, loginResponse.User.Role));
+                identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(c => c.Type == "unique_name").Value));
+                identity.AddClaim(new Claim(ClaimTypes.Role, jwt.Claims.FirstOrDefault(c => c.Type == "role").Value));
                 var principal = new ClaimsPrincipal(identity);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);   
 
                 HttpContext.Session.SetString(SD.SessionToken, loginResponse.Token);
                 return RedirectToAction("Index", "Home");
