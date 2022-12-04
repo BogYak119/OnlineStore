@@ -30,8 +30,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+//builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+//builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

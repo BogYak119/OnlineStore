@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnlineStore.DataAccess.Data;
 using OnlineStore.DataAccess.Repository;
 using OnlineStore.DataAccess.Repository.IRepository;
+using OnlineStore.Models;
 using OnlineStoreAPI;
 using System.Text;
 
@@ -16,6 +18,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddAutoMapper(typeof(OnlineStore.Models.DefaultMappingConfig));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();

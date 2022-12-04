@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Formatters.Internal;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OnlineStore.DataAccess.Data;
 using OnlineStore.DataAccess.Repository.IRepository;
@@ -17,24 +20,31 @@ namespace OnlineStore.DataAccess.Repository
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _db;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMapper _mapper;
         private string secretKey;
-        public UserRepository(ApplicationDbContext db, IConfiguration configuration)
+        public UserRepository(ApplicationDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IConfiguration configuration)
         {
             _db = db;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _mapper = mapper;
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
         }
         public bool isUniqueUser(string username)
         {
-            LocalUser user = _db.LocalUsers.FirstOrDefault(u => u.UserName == username);
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == username);
             return user == null ? true : false;
         }
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-            LocalUser user = _db.LocalUsers.FirstOrDefault(u => u.UserName == loginRequestDTO.UserName
-            && u.Password == loginRequestDTO.Password);
+            ApplicationUser? user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == loginRequestDTO.UserName);
 
-            if (user == null)
+            bool passwordIsValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
+
+            if (user == null || passwordIsValid == false)
             {
                 return new LoginResponseDTO()
                 {
@@ -43,15 +53,16 @@ namespace OnlineStore.DataAccess.Repository
                 };
             }
 
-            JwtSecurityTokenHandler? tokenHandler = new JwtSecurityTokenHandler();
+            var roles = await _userManager.GetRolesAsync(user);
+            var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretKey);
 
-            SecurityTokenDescriptor? tokenDescriptor = new SecurityTokenDescriptor
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role)
+                    new Claim(ClaimTypes.Name, user.UserName.ToString()),
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -62,26 +73,49 @@ namespace OnlineStore.DataAccess.Repository
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
             {
                 Token = tokenHandler.WriteToken(token),
-                User = user
+                User = _mapper.Map<UserDTO>(user),
             };
 
             return loginResponseDTO;
         }
 
-        public async Task<LocalUser> Register(RegistrationRequestDTO registrationRequestDTO)
+        public async Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO)
         {
-            LocalUser user = new LocalUser()
+            ApplicationUser user = new ApplicationUser()
             {
                 UserName = registrationRequestDTO.UserName,
-                Password = registrationRequestDTO.Password,
+                Email = registrationRequestDTO.UserName,
+                NormalizedEmail = registrationRequestDTO.UserName.ToLower(),
                 Name = registrationRequestDTO.Name,
-                Role = registrationRequestDTO.Role,
             };
-            await _db.LocalUsers.AddAsync(user);
-            await _db.SaveChangesAsync();
+            try
+            {
+                var result = await _userManager.CreateAsync(user, registrationRequestDTO.Password);
+                if (result.Succeeded)
+                {
+                    if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("admin"));
+                        await _roleManager.CreateAsync(new IdentityRole("customer"));
+                    }
+                    if (registrationRequestDTO.Role == null
+                        || !_roleManager.RoleExistsAsync(registrationRequestDTO.Role).GetAwaiter().GetResult())
+                    {
+                        await _userManager.AddToRoleAsync(user, "customer");
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, registrationRequestDTO.Role);
+                    }
+                    var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registrationRequestDTO.UserName);
+                    return _mapper.Map<UserDTO>(userToReturn);
+                }
+            }
+            catch (Exception ex)
+            {
 
-            user.Password = ""; //hide password
-            return user;
+            }
+            return new UserDTO();
         }
     }
 }
