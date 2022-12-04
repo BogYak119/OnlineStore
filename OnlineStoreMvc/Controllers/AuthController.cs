@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OnlineStore.Models;
@@ -77,6 +78,27 @@ namespace OnlineStoreMvc.Controllers
             return View();
         }
 
+
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        public IActionResult AdminRegister()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminRegister(RegistrationRequestDTO registrationRequest)
+        {
+            APIResponse registrationResponse = await _authService.RegisterAync<APIResponse>(registrationRequest);
+            if (registrationResponse != null && registrationResponse.isSuccess)
+            {
+                return View();
+            }
+
+            return View();
+        }
 
         public async Task<IActionResult> Logout()
         {

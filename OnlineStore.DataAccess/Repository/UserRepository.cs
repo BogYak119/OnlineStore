@@ -98,11 +98,15 @@ namespace OnlineStore.DataAccess.Repository
                         await _roleManager.CreateAsync(new IdentityRole("admin"));
                         await _roleManager.CreateAsync(new IdentityRole("customer"));
                     }
-                    if (!_roleManager.RoleExistsAsync(registrationRequestDTO.Role).GetAwaiter().GetResult())
+                    if (registrationRequestDTO.Role == null
+                        || !_roleManager.RoleExistsAsync(registrationRequestDTO.Role).GetAwaiter().GetResult())
                     {
-                        return new UserDTO();
+                        await _userManager.AddToRoleAsync(user, "customer");
                     }
-                    await _userManager.AddToRoleAsync(user, registrationRequestDTO.Role);
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, registrationRequestDTO.Role);
+                    }
                     var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registrationRequestDTO.UserName);
                     return _mapper.Map<UserDTO>(userToReturn);
                 }
