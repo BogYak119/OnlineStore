@@ -7,6 +7,6 @@ namespace OnlineStoreMvc.Services.IServices
     public interface IAuthService
     {
         Task<T> LoginAsync<T>(LoginRequestDTO loginRequest);
-        Task<T> RegisterAync<T>(RegistrationRequestDTO registrationRequest);
+        Task<T> RegisterAync<T>(RegistrationRequestDTO registrationRequest, string token = "");
     }
 }

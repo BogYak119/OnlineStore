@@ -70,11 +70,18 @@ namespace OnlineStoreMvc.Controllers
         public async Task<IActionResult> Register(RegistrationRequestDTO registrationRequest)
         {
             APIResponse registrationResponse = await _authService.RegisterAync<APIResponse>(registrationRequest);
-            if(registrationResponse != null && registrationResponse.isSuccess)
+            if (registrationResponse != null && registrationResponse.isSuccess)
             {
+                TempData["success"] = "Registration succeeded";
                 return RedirectToAction("Login");
             }
-
+            if (registrationResponse.ErrorMessages.Count > 0)
+            {
+                foreach (var error in registrationResponse.ErrorMessages)
+                {
+                    ModelState.AddModelError("ErrorMessages", error);
+                }
+            }
             return View();
         }
 
@@ -91,12 +98,19 @@ namespace OnlineStoreMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AdminRegister(RegistrationRequestDTO registrationRequest)
         {
-            APIResponse registrationResponse = await _authService.RegisterAync<APIResponse>(registrationRequest);
+            APIResponse registrationResponse = await _authService.RegisterAync<APIResponse>(registrationRequest, HttpContext.Session.GetString(SD.SessionToken));
             if (registrationResponse != null && registrationResponse.isSuccess)
             {
+                TempData["success"] = "User registered successfully";
                 return View();
             }
-
+            if (registrationResponse.ErrorMessages.Count > 0)
+            {
+                foreach (var error in registrationResponse.ErrorMessages)
+                {
+                    ModelState.AddModelError("ErrorMessages", error);
+                }
+            }
             return View();
         }
 

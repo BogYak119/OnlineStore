@@ -35,11 +35,8 @@
                             </li>
                             @if (User.IsInRole("admin"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Auth" asp-action="AdminRegister">Register User</a>
-                                </li>
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Managment</a>
+                                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Management</a>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
                                         <a class="dropdown-item" asp-area="Admin" asp-controller="Subcategory" asp-action="Index">Subcategory</a>
@@ -49,6 +46,13 @@
                                         @*<a class="dropdown-item" href="#">Something else here</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#">Separated link</a>*@
+                                    </div>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">User Management</a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">Users</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Auth" asp-action="AdminRegister">Register User</a>                                 
                                     </div>
                                 </li>
                             }

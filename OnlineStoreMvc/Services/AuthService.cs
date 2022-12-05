@@ -21,17 +21,18 @@ namespace OnlineStoreMvc.Services
             {
                 ApiType = SD.ApiType.POST,
                 Data = loginRequest,
-                Url = storeAPIUrl + "/api/UserAuth/login"
+                Url = storeAPIUrl + "/api/UserAPI/login"
             });
         }
 
-        public Task<T> RegisterAync<T>(RegistrationRequestDTO registrationRequest)
+        public Task<T> RegisterAync<T>(RegistrationRequestDTO registrationRequest, string token = "")
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.POST,
                 Data = registrationRequest,
-                Url = storeAPIUrl + "/api/UserAuth/register"
+                Url = storeAPIUrl + "/api/UserAPI/register",
+                Token = token
             });
         }
     }
