@@ -1,4 +1,4 @@
-﻿@model RegistrationRequestDTO
+﻿@model RegisterVM
 
 <form method="post">
     <div class="container border p-4">
@@ -10,16 +10,19 @@
         </div>
         <div class="row">
             <div class="col-6 offset-3 pb-2">
-                <input asp-for=@Model.UserName type="text" class="form-control" placeholder="Username..." />
+                <input asp-for=@Model.RegistrationRequestDTO.UserName type="text" class="form-control" placeholder="Username..." />
             </div>
             <div class="col-6 offset-3 pb-2">
-                <input asp-for=@Model.Name type="text" class="form-control" placeholder="Name..." />
+                <input asp-for=@Model.RegistrationRequestDTO.Name type="text" class="form-control" placeholder="Name..." />
             </div>
             <div class="col-6 offset-3 pb-2">
-                <input asp-for=@Model.Password type="text" class="form-control" placeholder="Password..." />
+                <input asp-for=@Model.RegistrationRequestDTO.Password type="text" class="form-control" placeholder="Password..." />
             </div>
-            <div class="col-6 offset-3 pb-2">
-                <input asp-for=@Model.Role type="text" class="form-control" placeholder="Role..." />
+            <div class = "col-6 offset-3 pb-2">
+                <select asp-for="@Model.RegistrationRequestDTO.Role" asp-items="@Model.RoleList" class="form-select">
+                    <option disabled selected>--Select Role--</option>
+                </select>
+                <span asp-validation-for="@Model.RegistrationRequestDTO.Role" class="text-danger"></span>
             </div>
             <div class="col-6 offset-3 pb-2">
                 <button type="submit" class="form-control btn-success" value="Submit">Register User</button>

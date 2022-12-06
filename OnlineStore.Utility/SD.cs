@@ -16,6 +16,8 @@ namespace OnlineStore.Utility
             DELETE
         }
 
+        public static readonly List<string> roles = new List<string>() { "admin", "customer" };
+
         public static string SessionToken = "JWTToken";
     }
 }
