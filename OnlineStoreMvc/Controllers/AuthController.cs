@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using OnlineStore.Models;
 using OnlineStore.Models.DTO;
+using OnlineStore.Models.ViewModels;
 using OnlineStore.Utility;
 using OnlineStoreMvc.Services.IServices;
 using System.IdentityModel.Tokens.Jwt;
@@ -90,28 +92,56 @@ namespace OnlineStoreMvc.Controllers
         [HttpGet]
         public IActionResult AdminRegister()
         {
-            return View();
+            RegisterVM registerVM = new RegisterVM()
+            {
+                RegistrationRequestDTO = new RegistrationRequestDTO()
+                {
+                    Role = ""
+                },
+                RoleList = SD.roles.ConvertAll(a =>
+                {
+                    return new SelectListItem()
+                    {
+                        Text = a.ToString(),
+                        Value = a.ToString(),
+                    };
+                })
+            };
+
+            return View(registerVM);
         }
 
         [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AdminRegister(RegistrationRequestDTO registrationRequest)
+        public async Task<IActionResult> AdminRegister(RegisterVM registerVM)
         {
-            APIResponse registrationResponse = await _authService.RegisterAync<APIResponse>(registrationRequest, HttpContext.Session.GetString(SD.SessionToken));
-            if (registrationResponse != null && registrationResponse.isSuccess)
+            if (ModelState.IsValid)
             {
-                TempData["success"] = "User registered successfully";
-                return View();
-            }
-            if (registrationResponse.ErrorMessages.Count > 0)
-            {
-                foreach (var error in registrationResponse.ErrorMessages)
+                APIResponse registrationResponse = await _authService.RegisterAync<APIResponse>(registerVM.RegistrationRequestDTO, HttpContext.Session.GetString(SD.SessionToken));
+                if (registrationResponse != null && registrationResponse.isSuccess)
                 {
-                    ModelState.AddModelError("ErrorMessages", error);
+                    TempData["success"] = "User registered successfully";
+                    return RedirectToAction("AdminRegister");
+                }
+                if (registrationResponse.ErrorMessages.Count > 0)
+                {
+                    foreach (var error in registrationResponse.ErrorMessages)
+                    {
+                        ModelState.AddModelError("ErrorMessages", error);
+                    }
                 }
             }
-            return View();
+            registerVM.RoleList = SD.roles.ConvertAll(a =>
+            {
+                return new SelectListItem()
+                {
+                    Text = a.ToString(),
+                    Value = a.ToString(),
+                    Selected = false
+                };
+            });
+            return View(registerVM);
         }
 
         public async Task<IActionResult> Logout()
