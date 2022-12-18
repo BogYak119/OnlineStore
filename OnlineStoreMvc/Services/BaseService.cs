@@ -32,8 +32,22 @@ namespace OnlineStoreMvc.Services
                 //if sending data to API
                 if (request.Data != null)
                 {
-                    requestMessage.Content = new StringContent(JsonConvert.SerializeObject(request.Data),
-                        Encoding.UTF8, "application/json");
+                    if (request.Data.GetType() == typeof(FormFile))
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            ((IFormFile)request.Data).CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            var content = new MultipartFormDataContent();
+                            content.Add(new ByteArrayContent(fileBytes), "image", "file.jpg");
+                            requestMessage.Content = content;
+                        }
+                    }
+                    else
+                    {
+                        requestMessage.Content = new StringContent(JsonConvert.SerializeObject(request.Data),
+                                                                       Encoding.UTF8, "application/json");
+                    }
                 }
 
                 switch (request.ApiType)

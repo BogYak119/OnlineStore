@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Images\Test images\randomPic.jpg" />
-    <Content Remove="wwwroot\Images\Test images\randomPic2.jfif" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
@@ -31,11 +26,7 @@
     <Folder Include="Areas\Support\Controllers\" />
     <Folder Include="Areas\Support\Models\" />
     <Folder Include="Areas\Support\Views\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\Images\Test images\randomPic.jpg" />
-    <None Include="wwwroot\Images\Test images\randomPic2.jfif" />
+    <Folder Include="wwwroot\Images\Products\" />
   </ItemGroup>
 
 </Project>

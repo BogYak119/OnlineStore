@@ -22,15 +22,21 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         private readonly IManufacturerService _manufacturerService;
         private readonly ISubcategoryService _subcategoryService;
         private readonly ICategoryService _categoryService;
+        private readonly IFileService _fileService;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(IProductService productService, IManufacturerService manufacturerService, ISubcategoryService subcategoryService, ICategoryService categoryService, IMapper mapper)
+        public ProductController(IProductService productService, IManufacturerService manufacturerService,
+            ISubcategoryService subcategoryService, ICategoryService categoryService, IMapper mapper, IFileService fileService, IWebHostEnvironment webHostEnvironment)
         {
             _productService = productService;
             _manufacturerService = manufacturerService;
             _subcategoryService = subcategoryService;
             _categoryService = categoryService;
+            _fileService = fileService;
             _mapper = mapper;
+            _fileService = fileService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
 
@@ -80,10 +86,25 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductVM productVM)
+        public async Task<IActionResult> Create(ProductVM productVM, IFormFile? image)
         {
             if (ModelState.IsValid)
             {
+                if (image != null)
+                {
+
+                    string fileName = Guid.NewGuid().ToString();
+                    var uploads = @"Images\Products";
+                    var extension = Path.GetExtension(image.FileName);
+                    string imagePath = Path.Combine(uploads, fileName + extension);
+
+                    using (FileStream fs = new FileStream(Path.Combine(_webHostEnvironment.WebRootPath,imagePath), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                    }
+                    productVM.ProductDTO.ImageUrl = imagePath;
+                }
+
                 APIResponse? productResponse = await _productService.CreateAsync<APIResponse>(_mapper.Map<ProductCreateDTO>(productVM.ProductDTO), HttpContext.Session.GetString(SD.SessionToken));
                 if (productResponse != null && productResponse.isSuccess)
                 {
@@ -97,6 +118,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                         ModelState.AddModelError("ErrorMessages", error);
                     }
                 }
+
             }
 
             APIResponse? manufacturerResponse = await _manufacturerService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
@@ -148,6 +170,7 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
                         Value = i.Id.ToString()
                     })
                 };
+
                 return View(productVM);
             }
             return RedirectToAction("Index");
@@ -157,8 +180,34 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProductVM productVM)
+        public async Task<IActionResult> Edit(ProductVM productVM, IFormFile? image)
         {
+
+            if (image != null)
+            {
+                //delete previous image
+                if (productVM.ProductDTO.ImageUrl != null)
+                {
+                    string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, productVM.ProductDTO.ImageUrl);
+                    FileInfo oldImage = new FileInfo(oldImagePath);
+                    if (oldImage.Exists)
+                    {
+                        oldImage.Delete();
+                    }
+                }
+
+                //set new image
+                string fileName = Guid.NewGuid().ToString();
+                var uploads = @"Images\Products";
+                var extension = Path.GetExtension(image.FileName);
+                string imagePath = Path.Combine(uploads, fileName + extension);
+
+                using (FileStream fs = new FileStream(Path.Combine(_webHostEnvironment.WebRootPath, imagePath), FileMode.Create))
+                {
+                    image.CopyTo(fs);
+                }
+                productVM.ProductDTO.ImageUrl = imagePath;
+            }
             if (ModelState.IsValid)
             {
                 APIResponse? productResponse = await _productService.UpdateAsync<APIResponse>(productVM.ProductDTO, HttpContext.Session.GetString(SD.SessionToken));
@@ -219,6 +268,17 @@ namespace OnlineStoreMvc.Areas.Admin.Controllers
             var response = await _productService.DeleteAsync<APIResponse>(productDTO.Id, HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
+                //delete previous image
+                if (productDTO.ImageUrl != null)
+                {
+                    string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, productDTO.ImageUrl);
+                    FileInfo oldImage = new FileInfo(oldImagePath);
+                    if (oldImage.Exists)
+                    {
+                        oldImage.Delete();
+                    }
+                }
+
                 TempData["success"] = "Product deleted successfully";
                 return RedirectToAction("Index");
             }

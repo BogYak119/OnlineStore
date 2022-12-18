@@ -28,6 +28,8 @@ builder.Services.AddHttpClient<IProductService, ProductService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddHttpClient<IUserService, UserService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddHttpClient<IFileService, FileService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
