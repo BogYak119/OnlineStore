@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="wwwroot\Images\Products\0224b978-6523-4125-8df3-7ee9b2fdd931.jpg" />
+    <None Remove="wwwroot\Images\Products\5175d47e-8455-4ae7-b9a5-ccd398e0f90a.jpg" />
+    <None Remove="wwwroot\Images\Products\fb1c8917-9289-46e5-b0a0-9d3ca66a0762.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
